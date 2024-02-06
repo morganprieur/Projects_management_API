@@ -1,0 +1,16 @@
+
+
+# Docker 
+.env 
+softdesk/commands/
+
+# Snyk 
+.dcignore
+
+roadmap.md
+
+# à vérifier et remettre : 
+softdesk/commands/
+
+
+
