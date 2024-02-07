@@ -55,13 +55,15 @@ au fichier compose.yaml
 72. Rebuilder et lancer le container et le serveur django :    
 `docker compose up --build --remove-orphans` 
 
-
 8. **Vérifer que tout fonctionne** 
 Ouvrir le navigateur à l'adresse `localhost:9000` 
 
+**Pour l'instant les migrations ne sont pas faites** 
+On les fera après avoir implémenté les modèles. 
 
 
 
+================ 
 
 
 4. Implémenter les modèles 

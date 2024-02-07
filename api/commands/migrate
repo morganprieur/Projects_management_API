@@ -1,2 +1,0 @@
-docker exec -it dev-api-1 python manage.py makemigrations uthdemo
-docker exec -it dev-api-1 python manage.py migrate
