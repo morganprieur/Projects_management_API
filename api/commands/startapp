@@ -1,2 +1,0 @@
-cd api
-python manage.py startapp authentication

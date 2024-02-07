@@ -2,7 +2,7 @@
 
 # Docker 
 .env 
-softdesk/commands/
+volumes/
 
 # Snyk 
 .dcignore
@@ -10,7 +10,7 @@ softdesk/commands/
 roadmap.md
 
 # à vérifier et remettre : 
-softdesk/commands/
+api/commands
 
 
 
