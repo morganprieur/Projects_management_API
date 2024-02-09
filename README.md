@@ -19,28 +19,38 @@ psycopg2 est indispensable avec PostgreSQL
 3. **Requirements.txt** 
 Mettre à jour les requirements :`pip freeze > softdesk/requirements.txt` 
 
-4. **Etapes BDD Django** 
-4. Changer les données dans DATABASES du fichier settings.py, remplacer les données Sqlite3 par celles-ci :    
-```python 
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': os.environ.get('POSTGRES_NAME'),   # nom de la bdd 
-    'USER': os.environ.get('POSTGRES_USER'),
-    'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-    'HOST': '<softdesk_db>',   # nom du service 
-    'PORT': 5432, 
-``` 
 
-5. **Utilisation de Docker** 
-51. Builder le container : 
-511. Dans compose.yaml, commenter la ligne "command..." 
-512. Lancer la commande :    
+4. Création du projet Django 
+
+41. **Utilisation de Docker** 
+411. Builder le container : 
+412. Dans compose.yaml, commenter la ligne "command..." 
+413. Lancer la commande :    
 `[sudo]* docker compose run <web>* django-admin startproject <nom_projet>* .` 
 pour installer le projet Django. 
-* 
+*: 
 sudo : selon votre configuration 
 web : le nom du dossier contenant le Dockerfile 
 nom_projet : le nom du projet à créer 
 . : le dossier courant 
+
+42. **Sans Docker** 
+Lancer la commande :    
+`django-admin startproject <nom_projet>* .` 
+*nom_projet: le nom du projet à créer 
+
+
+5. **Etapes BDD Django** 
+Changer les données dans DATABASES du fichier settings.py en remplaçant les données Sqlite3 par celles-ci :    
+```python 
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.environ.get('POSTGRES_DB'),   # nom de la bdd 
+    'USER': os.environ.get('POSTGRES_USER'),
+    'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+    'HOST': '<db>',   # nom du service 
+    'PORT': 5432, 
+``` 
+
 
 6. **Etape Application de Django** 
 61. Installer une application Django :    

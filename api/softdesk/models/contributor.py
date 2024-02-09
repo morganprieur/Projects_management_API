@@ -1,7 +1,7 @@
 
 from django.db import models 
 from django.contrib.auth.models import User 
-from softdesk.models import Comment, Issue, Project 
+from softdesk.models import Project 
 
 
 class Contributor(models.Model): 
@@ -9,17 +9,7 @@ class Contributor(models.Model):
     user = models.ForeignKey( 
         User, 
         on_delete=models.CASCADE, 
-        related_name='comment_author', 
-    ) 
-    comment = models.ForeignKey( 
-        Comment, 
-        on_delete=models.CASCADE, 
-        related_name='contributor_comment', 
-    ) 
-    issue = models.ForeignKey( 
-        Issue, 
-        on_delete=models.CASCADE, 
-        related_name='contributor_issue', 
+        related_name='contributor_user', 
     ) 
     project = models.ForeignKey( 
         Project, 

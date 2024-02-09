@@ -26,7 +26,7 @@ class Issue(models.Model):
     author = models.ForeignKey( 
         User, 
         on_delete=models.CASCADE, 
-        related_name='project_author' 
+        related_name='issue_author' 
     ) 
     project = models.ForeignKey( 
         Project, 
@@ -36,12 +36,12 @@ class Issue(models.Model):
     status = models.CharField( 
         max_length=6, 
         choices=ISSUE_PRIORITY, 
-        default=ISSUE_PRIORITY.TODO 
+        default=ISSUE_PRIORITY[0] 
     ) 
     priority = models.CharField( 
         max_length=8, 
         choices=ISSUE_STATUS, 
-        default=ISSUE_STATUS.LOW 
+        default=ISSUE_STATUS[0] 
     ) 
     tag = models.CharField( 
         max_length=7, 
@@ -51,23 +51,4 @@ class Issue(models.Model):
         auto_now_add=True 
     ) 
 
-""" 
-    author
-        PK user
-    project
-    statut de progression
-        To Do - défaut
-        In Progress
-        Finished
-    priorité
-        défaut ? non 
-        LOW
-        MEDIUM
-        HIGH
-    balise 
-        défaut ? non 
-        bug
-        feature
-        task 
-""" 
 

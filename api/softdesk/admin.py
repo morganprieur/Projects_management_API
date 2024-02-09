@@ -1,40 +1,40 @@
 from django.contrib import admin 
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin 
 from django.contrib.auth.models import User 
-from softdesk import ( 
-    Contributor, Comment, Issue, Project, UserProfile 
+from softdesk.models import ( 
+    Comment, Contributor, Issue, Project, UserProfile 
 ) 
 
 
-class UserAdmin(BaseUserAdmin): 
-    list_display = ( 
-        'id', 
-        'username', 
-        'groups_ids', 
-        'groups_names', 
-        'is_staff' 
-    ) 
+# class UserAdmin(BaseUserAdmin): 
+#     list_display = ( 
+#         'id', 
+#         'username', 
+#         # 'groups_ids', 
+#         # 'groups_names', 
+#         'is_staff', 
+#     ) 
 
-    # en-tête de colonnes : 
-    def groups_ids(self, user): 
-        user_group_ids = user.groups.values_list('id', flat=True)  # QuerySet Object  
-        group_ids_as_list = list(user_group_ids)  # QuerySet to `list`
+    # # en-tête de colonnes : 
+    # def groups_ids(self, user): 
+    #     user_group_ids = user.groups.values_list('id', flat=True)  # QuerySet Object  
+    #     group_ids_as_list = list(user_group_ids)  # QuerySet to `list`
 
-        text = group_ids_as_list  
-        return text 
-    groups_ids.short_description = 'Groups ids'
+    #     text = group_ids_as_list  
+    #     return text 
+    # groups_ids.short_description = 'Groups ids'
 
-    def groups_names(self, user): 
-        user_group_names = user.groups.values_list('name', flat=True)  # QuerySet Object 
-        group_names_as_list = list(user_group_names)  # QuerySet to `list` 
+    # def groups_names(self, user): 
+    #     user_group_names = user.groups.values_list('name', flat=True)  # QuerySet Object 
+    #     group_names_as_list = list(user_group_names)  # QuerySet to `list` 
 
-        text = group_names_as_list  
-        return text 
-    groups_names.short_description = 'Groups names' 
+    #     text = group_names_as_list  
+    #     return text 
+    # groups_names.short_description = 'Groups names' 
 
-# Re-register UserAdmin
-admin.site.unregister(User) 
-admin.site.register(User, UserAdmin) 
+# # Re-register UserAdmin
+# admin.site.unregister(User) 
+# admin.site.register(User, UserAdmin) 
 
 
 class UserProfileAdmin(admin.ModelAdmin): 
@@ -42,9 +42,9 @@ class UserProfileAdmin(admin.ModelAdmin):
         'pk', 
         'user', 
         'age', 
-        'can_be_contacted' 
-        'data_can_be_shared' 
-        'created_time' 
+        'can_be_contacted', 
+        'data_can_be_shared', 
+        'created_time', 
     ) 
 admin.site.register(UserProfile, UserProfileAdmin) 
 
@@ -54,8 +54,8 @@ class ProjectAdmin(admin.ModelAdmin):
         'author', 
         'name', 
         'description', 
-        'type' 
-        'created_time' 
+        'type', 
+        'created_time', 
     ) 
 admin.site.register(Project, ProjectAdmin) 
 
@@ -66,30 +66,27 @@ class IssueAdmin(admin.ModelAdmin):
         'project', 
         'status', 
         'priority', 
-        'tag' 
-        'created_time' 
+        'tag', 
+        'created_time', 
     ) 
 admin.site.register(Issue, IssueAdmin) 
 
 class CommentAdmin(admin.ModelAdmin): 
     list_display = ( 
-        'pk', 
         'uuid', 
         'author', 
         'issue', 
-        'description' 
-        'created_time' 
+        'description', 
+        'created_time', 
     ) 
 admin.site.register(Comment, CommentAdmin) 
 
-class ContributoAdmin(admin.ModelAdmin): 
+class ContributorAdmin(admin.ModelAdmin): 
     list_display = ( 
         'pk', 
         'user', 
-        'comment', 
-        'issue', 
-        'project' 
-        'created_time' 
+        'project', 
+        'created_time', 
     ) 
-admin.site.register(Contributo, ContributoAdmin) 
+admin.site.register(Contributor, ContributorAdmin) 
 

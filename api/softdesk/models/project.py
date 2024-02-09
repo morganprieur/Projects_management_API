@@ -1,5 +1,6 @@
 
 from django.db import models 
+from django.contrib.auth.models import User 
 
 
 PROJECT_TYPE = ( 
@@ -22,7 +23,7 @@ class Project(models.Model):
     type = models.CharField( 
         max_length=5, 
         choices=PROJECT_TYPE, 
-        default=PROJECT_TYPE.ALL 
+        default=PROJECT_TYPE[0] 
     ) 
     created_time = models.DateTimeField( 
         auto_now_add=True 

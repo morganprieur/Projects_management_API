@@ -2,9 +2,10 @@
 from django.db import models 
 from django.contrib.auth.models import User 
 from softdesk.models import Issue 
+import uuid 
 
 
-class Issue(models.Model): 
+class Comment(models.Model): 
 
     uuid = models.UUIDField( 
         primary_key=True, 
