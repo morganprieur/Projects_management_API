@@ -1,7 +1,5 @@
 
-from users.models import ( 
-    Contributor, UserProfile 
-) 
+from users.models import (UserProfile) 
 from users.serializers import UserSerializer 
 from django.contrib.auth.models import User 
 from users.models import UserProfile 

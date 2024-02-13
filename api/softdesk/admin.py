@@ -41,17 +41,6 @@ from softdesk.models import (
 # admin.site.register(User, UserAdmin) 
 
 
-# class UserProfileAdmin(admin.ModelAdmin): 
-#     list_display = ( 
-#         'pk', 
-#         'user', 
-#         'age', 
-#         'can_be_contacted', 
-#         'data_can_be_shared', 
-#         'created_time', 
-#     ) 
-# admin.site.register(UserProfile, UserProfileAdmin) 
-
 class ProjectAdmin(admin.ModelAdmin): 
     list_display = ( 
         'pk', 
@@ -84,13 +73,4 @@ class CommentAdmin(admin.ModelAdmin):
         'created_time', 
     ) 
 admin.site.register(Comment, CommentAdmin) 
-
-# class ContributorAdmin(admin.ModelAdmin): 
-#     list_display = ( 
-#         'pk', 
-#         'user', 
-#         'project', 
-#         'created_time', 
-#     ) 
-# admin.site.register(Contributor, ContributorAdmin) 
 

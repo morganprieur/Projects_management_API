@@ -18,21 +18,28 @@ from django.contrib import admin
 from django.urls import include, path 
 from rest_framework import routers 
 
-from users import urls 
+# from users import urls 
 from users import views as users_views 
+
+from softdesk import views as softdesk_views 
 
 router = routers.DefaultRouter() 
 # users_views 
 router.register(r"users", users_views.UserViewSet, basename='users') 
+# softdesk_views 
+router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects') 
 
 urlpatterns = [ 
     # api 
     path('api-auth/', include('rest_framework.urls')), 
     # users app 
-    path('users/', include(router.urls)), 
+    # path('users/', include(router.urls)), 
+    path('', include(router.urls)), 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     # path('users/signup/', users_views.SignupView.as_view(), name='signup'), 
-
+    # softdesk app 
+    # path('new_project/', softdesk_views.NewProjectView.as_view(), name='new_project'), 
+    # path('new_project/', softdesk_views.new_project, name='create-ticket'), 
     # admin 
     path('admin/', admin.site.urls), 
 
