@@ -18,9 +18,9 @@ class UserSerializer(serializers.ModelSerializer):
             'groups', 
         ) 
 
-    def create(self, validated_data): 
-        if 'user' in validated_data.keys(): 
-            validated_user_data = validated_data['user'] 
-            # validated_user_data['password'] = make_password(validated_user_data['password']) 
-            return User.objects.create(**validated_user_data) 
+    # def create(self, validated_data): 
+    #     if 'user' in validated_data.keys(): 
+    #         validated_user_data = validated_data['user'] 
+    #         # validated_user_data['password'] = make_password(validated_user_data['password']) 
+    #         return User.objects.create(**validated_user_data) 
 

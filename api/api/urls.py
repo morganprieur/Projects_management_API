@@ -38,7 +38,7 @@ urlpatterns = [
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     # path('users/signup/', users_views.SignupView.as_view(), name='signup'), 
     # softdesk app 
-    # path('new_project/', softdesk_views.NewProjectView.as_view(), name='new_project'), 
+    path('new_project/', softdesk_views.NewProjectView.as_view(), name='new_project'), 
     # path('new_project/', softdesk_views.new_project, name='create-ticket'), 
     # admin 
     path('admin/', admin.site.urls), 
