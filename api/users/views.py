@@ -8,7 +8,7 @@ from users.serializers import (
 ) 
 # from django_filters import rest_framework as filters 
 
-# from rest_framework.permissions import IsAuthenticated 
+from rest_framework.permissions import IsAuthenticated 
 # from uthdemo.permissions import ( 
 #     IsAdminAuthenticated, 
 #     IsEditorGroup, 
@@ -38,6 +38,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """ 
     queryset = User.objects.all().order_by('-date_joined') 
     serializer_class = UserSerializer 
+    permission_classes = [IsAuthenticated] 
     # permission_classes = [permissions.IsAuthenticated] 
     # permission_classes = [IsAdminAuthenticated, ] 
 

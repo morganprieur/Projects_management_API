@@ -17,10 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path 
 from rest_framework import routers 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView, 
+) 
 
-# from users import urls 
 from users import views as users_views 
-
 from softdesk import views as softdesk_views 
 
 router = routers.DefaultRouter() 
@@ -39,5 +41,9 @@ urlpatterns = [
 
     # admin 
     path('admin/', admin.site.urls), 
+
+    # JWT 
+    path('jwt/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
+    path('jwt/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
 
 ]
