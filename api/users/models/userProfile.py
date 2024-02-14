@@ -4,13 +4,13 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(models.Model): 
-    # user = models.ForeignKey( 
-    #     User, 
-    #     on_delete=models.CASCADE, 
-    #     related_name='profile_user', 
-    #     # blank=True, 
-    #     # null=True, 
-    # ) 
+    user = models.ForeignKey( 
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='profile_user', 
+        # blank=True, 
+        # null=True, 
+    ) 
     age = models.IntegerField( 
         blank=True, 
         null=True, 

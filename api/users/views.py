@@ -19,6 +19,7 @@ from rest_framework import generics, viewsets
 from rest_framework.generics import CreateAPIView 
 from rest_framework.parsers import JSONParser 
 from rest_framework.response import Response 
+from rest_framework.views import APIView 
 
 # from django.views.generic import View 
 
@@ -52,6 +53,7 @@ class UserViewSet(viewsets.ModelViewSet):
     #         serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# class SignupView(APIView): 
 class SignupView(CreateAPIView): 
     # permission_classes = [IsAdminAuthenticated,]  # IsManagerGroup| 
     # serializer_class = UserPofileSerializer 
@@ -74,12 +76,12 @@ class SignupView(CreateAPIView):
         # Save the data to the serializer for validating and saving them into the DB 
         serializer = UserPofileSerializer(data=data) 
         if serializer.is_valid(): 
-            print('yes') 
+            print('is_valid yes') 
 
             serializer.save() 
             return Response(serializer.data, status=201) 
         else: 
-            print('no') 
+            print('is_valid no') 
             return Response(serializer.errors, status=400) 
 
     # def post(self, request, format=None): 

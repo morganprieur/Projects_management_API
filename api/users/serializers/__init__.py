@@ -1,3 +1,3 @@
 
 from .userSerializer import UserSerializer 
-from .userProfileSerializer import UserPofileSerializer 
+from .userSerializer import UserPofileSerializer 

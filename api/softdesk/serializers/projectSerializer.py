@@ -26,9 +26,12 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class CreateProjectSerializer(serializers.ModelSerializer): 
     # author = UserSerializer() 
-    author = serializers.HiddenField(
+    author = serializers.HiddenField( 
         default=serializers.CurrentUserDefault() 
     ) 
+    # author = serializers.HiddenField(
+    #     default=serializers.CurrentUserDefault() 
+    # ) 
     class Meta: 
         model = Project 
         fields = ( 

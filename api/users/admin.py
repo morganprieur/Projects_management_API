@@ -41,7 +41,7 @@ admin.site.register(User, UserAdmin)
 class UserProfileAdmin(admin.ModelAdmin): 
     list_display = ( 
         'pk', 
-        # 'user', 
+        'user', 
         'age', 
         'can_be_contacted', 
         'data_can_be_shared', 
