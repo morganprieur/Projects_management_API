@@ -1,23 +1,20 @@
+
 from django.contrib import admin 
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin 
 from django.contrib.auth.models import User 
-from softdesk.models import ( 
-    Comment, 
-    # Contributor, 
-    Issue, 
-    Project, 
-    # UserProfile 
+from users.models import ( 
+    Contributor, UserProfile 
 ) 
 
 
-# class UserAdmin(BaseUserAdmin): 
-#     list_display = ( 
-#         'id', 
-#         'username', 
-#         # 'groups_ids', 
-#         # 'groups_names', 
-#         'is_staff', 
-#     ) 
+class UserAdmin(BaseUserAdmin): 
+    list_display = ( 
+        'id', 
+        'username', 
+        # 'groups_ids', 
+        # 'groups_names', 
+        'is_staff', 
+    ) 
 
     # # en-tête de colonnes : 
     # def groups_ids(self, user): 
@@ -36,41 +33,30 @@ from softdesk.models import (
     #     return text 
     # groups_names.short_description = 'Groups names' 
 
-# # Re-register UserAdmin
-# admin.site.unregister(User) 
-# admin.site.register(User, UserAdmin) 
+# Re-register UserAdmin
+admin.site.unregister(User) 
+admin.site.register(User, UserAdmin) 
 
 
-class ProjectAdmin(admin.ModelAdmin): 
+class UserProfileAdmin(admin.ModelAdmin): 
     list_display = ( 
         'pk', 
-        'author', 
-        'name', 
-        'description', 
-        'type', 
+        'user', 
+        'age', 
+        'can_be_contacted', 
+        'data_can_be_shared', 
         'created_time', 
     ) 
-admin.site.register(Project, ProjectAdmin) 
+admin.site.register(UserProfile, UserProfileAdmin) 
 
-class IssueAdmin(admin.ModelAdmin): 
+
+class ContributorAdmin(admin.ModelAdmin): 
     list_display = ( 
         'pk', 
-        'author', 
+        'user', 
         'project', 
-        'status', 
-        'priority', 
-        'tag', 
         'created_time', 
     ) 
-admin.site.register(Issue, IssueAdmin) 
+admin.site.register(Contributor, ContributorAdmin) 
 
-class CommentAdmin(admin.ModelAdmin): 
-    list_display = ( 
-        'uuid', 
-        'author', 
-        'issue', 
-        'description', 
-        'created_time', 
-    ) 
-admin.site.register(Comment, CommentAdmin) 
 
