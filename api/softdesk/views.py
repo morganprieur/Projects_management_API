@@ -107,37 +107,37 @@ class ProjectViewSet(viewsets.ModelViewSet):
 #     serializer_class = ProfileSerializer
 #     permission_classes = (IsAuthenticated,) 
 
-class NewProjectView(CreateAPIView): 
-    model = Project 
-    serializer_class = CreateProjectSerializer 
-    # Authentication required 
-    # permission_classes = [IsAdminAuthenticated,]  # IsManagerGroup| 
-    # queryset = Project.objects.all() 
-    # serializer_class = ProjectSerializer 
-    # parser_classes = [JSONParser] 
+# class NewProjectView(CreateAPIView): 
+#     model = Project 
+#     serializer_class = CreateProjectSerializer 
+#     # Authentication required 
+#     # permission_classes = [IsAdminAuthenticated,]  # IsManagerGroup| 
+#     # queryset = Project.objects.all() 
+#     # serializer_class = ProjectSerializer 
+#     # parser_classes = [JSONParser] 
 
-    # def post(self, request): 
-    #     print('request : ', request) 
-    #     data = JSONParser().parse(request) 
-    #     print('data views : ', data) 
+#     # def post(self, request): 
+#     #     print('request : ', request) 
+#     #     data = JSONParser().parse(request) 
+#     #     print('data views : ', data) 
 
-    #     data['author'] = User.objects.get(id=request.user.id) 
+#     #     data['author'] = User.objects.get(id=request.user.id) 
 
-    #     serializer = ProjectSerializer(data=data) 
-    #     print('serializer.initial_data : ', serializer.initial_data) 
-    #     print('serializer.is_valid', serializer.is_valid()) 
-    #     if serializer.is_valid(): 
-    #         # serializer.save() 
-    #         print('serializer.validated_data1', serializer.validated_data) 
-    #         serializer.save( 
-    #             type=data['project']['type'], 
-    #             name=data['project']['name'], 
-    #             description=data['project']['description'] 
-    #         )
-    #         print('serializer.validated_data2', serializer.validated_data) 
-    #         print('serializer.data', serializer.data) 
-    #         # print('serializer.initial_data2 : ', serializer.initial_data) 
-    #         return Response(serializer.data, status=201) 
-    #     return Response(serializer.errors, status=400) 
+#     #     serializer = ProjectSerializer(data=data) 
+#     #     print('serializer.initial_data : ', serializer.initial_data) 
+#     #     print('serializer.is_valid', serializer.is_valid()) 
+#     #     if serializer.is_valid(): 
+#     #         # serializer.save() 
+#     #         print('serializer.validated_data1', serializer.validated_data) 
+#     #         serializer.save( 
+#     #             type=data['project']['type'], 
+#     #             name=data['project']['name'], 
+#     #             description=data['project']['description'] 
+#     #         )
+#     #         print('serializer.validated_data2', serializer.validated_data) 
+#     #         print('serializer.data', serializer.data) 
+#     #         # print('serializer.initial_data2 : ', serializer.initial_data) 
+#     #         return Response(serializer.data, status=201) 
+#     #     return Response(serializer.errors, status=400) 
 
 
