@@ -1,9 +1,10 @@
 
 from django.contrib.auth.models import User 
-from users.models import UserProfile  # Contributor, 
+from users.models import (UserProfile, Contributor) 
 from users.serializers import ( 
     UserSerializer, 
     UserPofileSerializer, 
+    ContributorSerializer, 
 ) 
 # from django_filters import rest_framework as filters 
 
@@ -66,14 +67,9 @@ class SignupView(CreateAPIView):
             return Response(serializer.errors, status=400) 
 
 
-# class ProjectViewSet(viewsets.ModelViewSet): 
-#     queryset = Project.objects.all().order_by('-created_time') 
-#     serializer_class = CreateProjectSerializer 
-#     model = Project 
-
-
 class GetUserProfileView(viewsets.ModelViewSet): 
     serializer_class = UserPofileSerializer 
+    permission_classes = [IsAuthenticated] 
     model = UserProfile 
 
     def get(self, request): 
@@ -87,6 +83,7 @@ class GetUserProfileView(viewsets.ModelViewSet):
 
 class UpdateProfileView(viewsets.ModelViewSet): 
     serializer_class = UserPofileSerializer 
+    permission_classes = [IsAuthenticated] 
     queryset = UserProfile.objects.get(user__username='root') 
 
     def update(self, request): 
@@ -113,8 +110,19 @@ class LogoutView(APIView):
         logout(request) 
         return Response({'message': "Logout successful"}) 
 
-# class LogoutView(views.APIView):
-#     def post(self, request):
-#         logout(request)
-#         return Response({'message': "Logout successful"})
+
+class AddProjectContributorView(viewsets.ModelViewSet): 
+    serializer_class = ContributorSerializer 
+    permission_classes = [IsAuthenticated] 
+    # quesryset = Contributor.objects.all() 
+
+    def post(self, request): 
+        data = JSONParser().parse(request) 
+        print(data) 
+        serializer = ContributorSerializer(data=data) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=200) 
+        return Response(serializer.errors, status=400) 
+
 

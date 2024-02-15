@@ -19,4 +19,3 @@ class ProjectViewSet(viewsets.ModelViewSet):
     model = Project 
 
 
-
