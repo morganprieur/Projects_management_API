@@ -66,12 +66,29 @@ class SignupView(CreateAPIView):
             return Response(serializer.errors, status=400) 
 
 
-# TODO: voir si possible de mettre ce update dans une classe UserProfileView (ou autre View) 
+# class ProjectViewSet(viewsets.ModelViewSet): 
+#     queryset = Project.objects.all().order_by('-created_time') 
+#     serializer_class = CreateProjectSerializer 
+#     model = Project 
+
+
+class GetUserProfileView(viewsets.ModelViewSet): 
+    serializer_class = UserPofileSerializer 
+    model = UserProfile 
+
+    def get(self, request): 
+        user = request.user 
+        # print('user : ', user) 
+        profile = UserProfile.objects.get(user=user) 
+        # print('profile : ', profile) 
+        serializer = UserPofileSerializer(profile) 
+        return Response(serializer.data) 
+
+
 class UpdateProfileView(viewsets.ModelViewSet): 
     serializer_class = UserPofileSerializer 
     queryset = UserProfile.objects.get(user__username='root') 
 
-    # def put(self, request): 
     def update(self, request): 
         # print('request user : ', request.user) 
         data = JSONParser().parse(request) 

@@ -28,6 +28,7 @@ from softdesk import views as softdesk_views
 router = routers.DefaultRouter() 
 # users_views 
 router.register(r"users", users_views.UserViewSet, basename='users') 
+# router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 # softdesk_views 
 router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects') 
 
@@ -37,14 +38,16 @@ urlpatterns = [
     # users app 
     path('', include(router.urls)), 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
+    path('profile/', users_views.GetUserProfileView.as_view({'get':'get'}), name='profile'), 
     path('update_profile/', users_views.UpdateProfileView.as_view({'put':'update'}), name='update_profile'), 
+    # path('profile/', users_views.UserProfileView.as_view({'put':'update'}), name='update_profile'), 
     # softdesk app 
 
     # admin 
     path('admin/', admin.site.urls), 
 
     # JWT 
-    path('jwt/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
+    path('jwt/get_token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
     path('jwt/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
 
 ]
