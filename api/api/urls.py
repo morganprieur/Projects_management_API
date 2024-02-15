@@ -17,9 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path 
 from rest_framework import routers 
+# JWT 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView, 
+) 
+# drf_spectacular 
+from drf_spectacular.views import ( 
+    SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView, 
 ) 
 
 from users import views as users_views 
@@ -40,14 +45,19 @@ urlpatterns = [
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     path('profile/', users_views.GetUserProfileView.as_view({'get':'get'}), name='profile'), 
     path('update_profile/', users_views.UpdateProfileView.as_view({'put':'update'}), name='update_profile'), 
-    # path('profile/', users_views.UserProfileView.as_view({'put':'update'}), name='update_profile'), 
+    path('logout/', users_views.LogoutView.as_view(), name='logout'), 
     # softdesk app 
 
     # admin 
     path('admin/', admin.site.urls), 
 
-    # JWT 
+    # JWT login 
     path('jwt/get_token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
     path('jwt/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
 
-]
+    # Doc: drf_spectacular (dl YAML file) 
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Doc: UI: 
+    path('api/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), 
+] 

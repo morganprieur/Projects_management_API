@@ -104,3 +104,17 @@ class UpdateProfileView(viewsets.ModelViewSet):
             return Response(serializer.data, status=201) 
         return Response(serializer.errors, status=400) 
 
+
+class LogoutView(APIView): 
+
+    def post(self, request): 
+        print('request : ', request)
+        print('request user : ', request.user)
+        logout(request) 
+        return Response({'message': "Logout successful"}) 
+
+# class LogoutView(views.APIView):
+#     def post(self, request):
+#         logout(request)
+#         return Response({'message': "Logout successful"})
+

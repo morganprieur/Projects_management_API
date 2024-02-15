@@ -1,6 +1,6 @@
 
 from django.contrib.auth.models import User 
-from users.models import UserProfile 
+from users.models import (Contributor, UserProfile) 
 
 # utils 
 from rest_framework import serializers 
@@ -34,6 +34,20 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 
             'password', 
             'groups', 
+        ) 
+
+
+class ContributorSerializer(serializers.ModelSerializer): 
+    """ Class to serialize/deserialize a Contributor instance, 
+        from the Contributor model. 
+    """ 
+    class Meta: 
+        model = Contributor 
+        fields = ( 
+            'id', 
+            'user', 
+            'project', 
+            'created_time', 
         ) 
 
 

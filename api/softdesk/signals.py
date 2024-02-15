@@ -8,9 +8,8 @@ from django.dispatch import receiver
 from datetime import datetime 
 
 
-# Quand on crée un Client : 
-#   un User est créé, 
-#   et le groupe "owner_group" est ajouté à ses groupes 
+# Quand on crée un Project : 
+#   un Contributor est créé 
 @receiver(post_save, sender=Client) 
 def create_owner_user(sender, instance, created, **kwargs): 
     """ When a Client instance is created: 

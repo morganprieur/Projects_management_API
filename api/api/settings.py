@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'softdesk',
     'users',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -149,7 +150,7 @@ REST_FRAMEWORK = {
     # 'DJANGO_SETTINGS_MODULE': os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dashboard.settings'), 
     
     # # drf_spectacular 
-    # 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', 
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', 
 } 
 
 
