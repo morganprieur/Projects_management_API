@@ -65,3 +65,25 @@ class SignupView(CreateAPIView):
             # print('is_valid no') 
             return Response(serializer.errors, status=400) 
 
+
+# TODO: voir si possible de mettre ce update dans une classe UserProfileView (ou autre View) 
+class UpdateProfileView(viewsets.ModelViewSet): 
+    serializer_class = UserPofileSerializer 
+    queryset = UserProfile.objects.get(user__username='root') 
+
+    # def put(self, request): 
+    def update(self, request): 
+        # print('request user : ', request.user) 
+        data = JSONParser().parse(request) 
+        profile = UserProfile.objects.get(user__username=request.user.username) 
+        # print('data : ', data) 
+        
+        serializer = UserPofileSerializer(profile, data=data, partial=True) 
+        # print('serializer initial : ', serializer.initial_data) 
+        if serializer.is_valid(): 
+            # print('valid') 
+            # print('serializer validated : ', serializer.validated_data) 
+            serializer.save() 
+            return Response(serializer.data, status=201) 
+        return Response(serializer.errors, status=400) 
+

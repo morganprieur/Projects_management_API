@@ -37,6 +37,7 @@ urlpatterns = [
     # users app 
     path('', include(router.urls)), 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
+    path('update_profile/', users_views.UpdateProfileView.as_view({'put':'update'}), name='update_profile'), 
     # softdesk app 
 
     # admin 

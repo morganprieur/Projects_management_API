@@ -49,6 +49,7 @@ class UserPofileSerializer(serializers.ModelSerializer):
     class Meta: 
         model = UserProfile 
         fields = ( 
+            'id', 
             'user', 
             'age', 
             'can_be_contacted', 
@@ -56,26 +57,54 @@ class UserPofileSerializer(serializers.ModelSerializer):
             'created_time', 
         ) 
 
-    def create(self, validated_data): 
-        # print('validated_data UPS41 : ', validated_data) 
-        if validated_data['age'] > 15: 
-            # print('if > 15') 
-            if 'user' in validated_data.keys(): 
-                # print('user yes') 
-                user_data = validated_data.pop('user') 
-                user_data['password'] = make_password(user_data['password']) 
+    # def create(self, validated_data):
+    #     answer, created = Answer.objects.update_or_create(
+    #         question=validated_data.get('question', None),
+    #         defaults={'answer': validated_data.get('answer', None)})
+    #     return answer
 
-                new_user = User.objects.create(**user_data) 
-                get_user = User.objects.last() 
-                # print('last_user : ', get_user) 
+    def create(self, instance, validated_data): 
+        # print('create instance UPS67 : ', instance) 
+        # print('create validated_data UPS68 : ', validated_data) 
+        if 'age' in validated_data.keys(): 
+            if validated_data['age'] > 15: 
+                # print('if age > 15') 
+                if 'user' in validated_data.keys(): 
+                    # print('user yes') 
+                    user_data = validated_data.pop('user') 
+                    user_data['password'] = make_password(user_data['password']) 
 
-                return UserProfile.objects.create( 
-                    user = get_user, 
-                    **validated_data, 
-                ) 
-        else:  
-            # print('else') 
-            # print(validated_data['age']) 
-            age = minimum_age(validated_data['age']) 
-            return False 
+                    new_user = User.objects.create(**user_data) 
+                    get_user = User.objects.last() 
+                    # print('last_user : ', get_user) 
+
+                    return UserProfile.objects.create( 
+                        user = get_user, 
+                        **validated_data, 
+                    ) 
+            else:  
+                # print('else') 
+                # print(validated_data['age']) 
+                age = minimum_age(validated_data['age']) 
+                return False 
+        else: 
+            profile = profile.update( 
+                **validated_data, 
+            ) 
+            profile.save() 
+            print('profile : ', profile) 
+            return profile 
+
+
+        
+
+    # def update(self, validated_data): 
+    #     print('update validated_data UPS84 : ', validated_data) 
+    #     # updated_profile = {} 
+    #     # updated_profile['can_be_contacted'] = validated_data['can_be_contacted'] 
+    #     # updated_profile['data_can_be_shared'] = validated_data['data_can_be_shared'] 
+    #     # return UserProfile.objects.update( 
+    #     #     **updated_profile, 
+    #     # ) 
+
 
