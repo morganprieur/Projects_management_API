@@ -33,6 +33,7 @@ from softdesk import views as softdesk_views
 router = routers.DefaultRouter() 
 # users_views 
 router.register(r"users", users_views.UserViewSet, basename='users') 
+router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
 # router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 # softdesk_views 
 router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects') 
@@ -48,6 +49,7 @@ urlpatterns = [
     path('add_project_contributor/', users_views.AddProjectContributorView.as_view({'post': 'post'}), name='add_contributor'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
     # softdesk app 
+    path('new_project/', softdesk_views.CreateProjectView.as_view(), name='new_project'), 
 
     # admin 
     path('admin/', admin.site.urls), 

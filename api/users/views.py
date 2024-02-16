@@ -111,6 +111,12 @@ class LogoutView(APIView):
         return Response({'message': "Logout successful"}) 
 
 
+class ContributorViewSet(viewsets.ModelViewSet): 
+    serializer_class = ContributorSerializer 
+    permission_classes = [IsAuthenticated] 
+    queryset = Contributor.objects.all() 
+
+
 class AddProjectContributorView(viewsets.ModelViewSet): 
     serializer_class = ContributorSerializer 
     permission_classes = [IsAuthenticated] 

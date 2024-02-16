@@ -27,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
     """ Class to serialize/deserialize a User instance, 
         from the User model. 
     """ 
+    username = serializers.CharField() 
     class Meta: 
         model = User 
         fields = ( 

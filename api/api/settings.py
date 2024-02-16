@@ -140,15 +140,15 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ), 
-
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
         'rest_framework.parsers.MultiPartParser',
     ], 
-
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', 
+    'PAGE_SIZE': 10, 
     # # Used for the tests : 
     # 'DJANGO_SETTINGS_MODULE': os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dashboard.settings'), 
-    
+   
     # # drf_spectacular 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', 
 } 

@@ -2,7 +2,7 @@
 
 from django.contrib.auth.models import User 
 from softdesk.models import Project 
-from users.serializers import UserSerializer 
+from users.serializers import UserSerializer, ContributorSerializer 
 # utils 
 from rest_framework import serializers 
 # import re 
@@ -15,13 +15,34 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta: 
         model = Project 
         fields = ( 
-            'pk', 
+            'id', 
             'author', 
             'name', 
             'description', 
             'type', 
             'created_time', 
         ) 
+        extra_kwargs = {'author': {'required': False}} 
+
+    # Custom create() 
+    def create(self, validated_data): 
+        # print(f'validated_data PS41 : {validated_data}') 
+        # print(f'validated_data.keys() PS42 : {validated_data.keys()}') 
+
+        if 'author' in validated_data.keys(): 
+            author_data = validated_data.pop('author') 
+            # print(f'author_data PS33 : {author_data}') 
+
+            get_author = User.objects.get( 
+                username=author_data['username']) 
+            # print(f'author PS41 : {get_author}') 
+
+            new_project = Project.objects.create( 
+                author=get_author, 
+                **validated_data 
+            ) 
+            # print('new project : ', new_project) 
+            return new_project 
 
 
 class CreateProjectSerializer(serializers.ModelSerializer): 
@@ -43,18 +64,6 @@ class CreateProjectSerializer(serializers.ModelSerializer):
             'created_time', 
         ) 
     # extra_kwargs = {'name': {'required': False}} 
-
-    # def create(self, validated_data): 
-    #     print('validated_data : ', validated_data) 
-    #     # if 'author' in validated_data.keys(): 
-    #     #     author_data = validated_data['author'].pop('author') 
-    #     #     get_user = User.objects.filter( 
-    #     #         username=author_data['username']) 
-    #     # new_project = Project.objects.create( 
-    #     #     # author = get_user, 
-    #     #     **validated_data, 
-    #     # ) 
-    #     return Project.objects.create(**validated_data,) 
 
     # Custom create() 
     def create(self, validated_data): 
