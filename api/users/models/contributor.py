@@ -20,3 +20,7 @@ class Contributor(models.Model):
         auto_now_add=True 
     ) 
 
+    class Meta: 
+        unique_together = ('user', 'project', ) 
+        
+
