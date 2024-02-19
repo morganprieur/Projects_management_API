@@ -27,12 +27,6 @@ class Project(models.Model):
         choices=PROJECT_TYPE, 
         default=PROJECT_TYPE[1][0] 
     ) 
-    contributors = models.ManyToManyField( 
-        User, 
-        # on_delete=models.CASCADE, 
-        related_name='project_contributors',  
-    ) 
-    # users_that_like_me = models.ManyToManyField('User', ..., related_name='songs_that_i_like')
     created_time = models.DateTimeField( 
         auto_now_add=True 
     ) 

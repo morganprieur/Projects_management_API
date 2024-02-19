@@ -15,15 +15,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework.views import APIView 
 
-# from django.views.generic import View 
-
-from django.conf import settings 
-
 # import des fonctions authenticate, login et logout 
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.decorators import login_required 
-
-from django.db.models import Q 
 
 
 class UserViewSet(viewsets.ModelViewSet): 
@@ -37,10 +31,7 @@ class UserViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAdminAuthenticated, ] 
 
 
-# class SignupView(APIView): 
 class SignupView(CreateAPIView): 
-    # serializer_class = UserPofileSerializer 
-    # parser_classes = [JSONParser] 
 
     def post(self, request): 
         """ Sends data for création of a Tech_site instance, 
@@ -59,12 +50,9 @@ class SignupView(CreateAPIView):
         # Save the data to the serializer for validating and saving them into the DB. 
         serializer = UserPofileSerializer(data=data) 
         if serializer.is_valid(): 
-            # print('is_valid yes') 
             serializer.save() 
             return Response(serializer.data, status=201) 
-        else: 
-            # print('is_valid no') 
-            return Response(serializer.errors, status=400) 
+        return Response(serializer.errors, status=400) 
 
 
 class GetUserProfileView(viewsets.ModelViewSet): 
@@ -124,7 +112,7 @@ class AddProjectContributorView(viewsets.ModelViewSet):
 
     def post(self, request): 
         data = JSONParser().parse(request) 
-        print(data) 
+        # print(data) 
         serializer = ContributorSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 

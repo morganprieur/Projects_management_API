@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 from users.models import UserProfile 
 
 # utils 
-from rest_framework import serializers 
 from django.contrib.auth.hashers import make_password 
+from rest_framework import serializers 
 from rest_framework.validators import UniqueValidator 
 # import re 
 # from datetime import datetime, timedelta 
