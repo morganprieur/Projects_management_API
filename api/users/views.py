@@ -1,5 +1,6 @@
 
 from django.contrib.auth.models import User 
+from softdesk.models import Project 
 from users.models import (UserProfile, Contributor) 
 from users.serializers import ( 
     UserSerializer, 
@@ -106,7 +107,15 @@ class ContributorViewSet(viewsets.ModelViewSet):
 
     def create(self, request): 
         data = request.data 
-        # print(data) 
+        user = User.objects.get(id=data['user']) 
+        data['user'] = {} 
+        data['user']['username'] = user.username 
+        data['user']['password'] = user.password 
+        project = Project.objects.get(id=data['project']) 
+        data['project'] = {} 
+        # data['project']['id'] = project.id 
+        data['project']['name'] = project.name 
+        print(data) 
         serializer = ContributorSerializer(data=data) 
         # print('serializer.initial_data : ', serializer.initial_data) 
         if serializer.is_valid(): 
