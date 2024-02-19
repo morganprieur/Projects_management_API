@@ -46,7 +46,7 @@ urlpatterns = [
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     path('profile/', users_views.GetUserProfileView.as_view({'get':'get'}), name='profile'), 
     path('update_profile/', users_views.UpdateProfileView.as_view({'put':'update'}), name='update_profile'), 
-    path('add_project_contributor/', users_views.AddProjectContributorView.as_view({'post': 'post'}), name='add_contributor'), 
+    # path('add_project_contributor/', users_views.AddProjectContributorView.as_view({'post': 'post'}), name='add_contributor'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
     # softdesk app 
 

@@ -46,8 +46,6 @@ class SignupView(CreateAPIView):
                     400 with the error if the request has not been completely executed. 
         """ 
         data = JSONParser().parse(request) 
-        # print('data : ', data) 
-        # Save the data to the serializer for validating and saving them into the DB. 
         serializer = UserPofileSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 
@@ -69,6 +67,7 @@ class GetUserProfileView(viewsets.ModelViewSet):
         return Response(serializer.data) 
 
 
+# TODO: Voir si possible de simplifier (viewsets) 
 class UpdateProfileView(viewsets.ModelViewSet): 
     serializer_class = UserPofileSerializer 
     permission_classes = [IsAuthenticated] 
@@ -91,32 +90,43 @@ class UpdateProfileView(viewsets.ModelViewSet):
 
 
 class LogoutView(APIView): 
-
+    """ View to logout the user. 
+    """ 
     def post(self, request): 
         print('request : ', request)
-        print('request user : ', request.user)
         logout(request) 
         return Response({'message': "Logout successful"}) 
 
 
+# BUG: username + password + name projet obligatoires 
 class ContributorViewSet(viewsets.ModelViewSet): 
     serializer_class = ContributorSerializer 
     permission_classes = [IsAuthenticated] 
     queryset = Contributor.objects.all() 
 
-
-class AddProjectContributorView(viewsets.ModelViewSet): 
-    serializer_class = ContributorSerializer 
-    permission_classes = [IsAuthenticated] 
-    # quesryset = Contributor.objects.all() 
-
-    def post(self, request): 
-        data = JSONParser().parse(request) 
+    def create(self, request): 
+        data = request.data 
         # print(data) 
         serializer = ContributorSerializer(data=data) 
+        # print('serializer.initial_data : ', serializer.initial_data) 
         if serializer.is_valid(): 
             serializer.save() 
             return Response(serializer.data, status=200) 
         return Response(serializer.errors, status=400) 
+
+
+# class AddProjectContributorView(viewsets.ModelViewSet): 
+#     serializer_class = ContributorSerializer 
+#     permission_classes = [IsAuthenticated] 
+#     # quesryset = Contributor.objects.all() 
+
+#     def post(self, request): 
+#         data = JSONParser().parse(request) 
+#         # print(data) 
+#         serializer = ContributorSerializer(data=data) 
+#         if serializer.is_valid(): 
+#             serializer.save() 
+#             return Response(serializer.data, status=200) 
+#         return Response(serializer.errors, status=400) 
 
 
