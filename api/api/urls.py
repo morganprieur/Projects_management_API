@@ -17,15 +17,24 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path 
 from rest_framework import routers 
+# JWT 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView, 
+) 
+# drf_spectacular 
+from drf_spectacular.views import ( 
+    SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView, 
+) 
 
-# from users import urls 
 from users import views as users_views 
-
 from softdesk import views as softdesk_views 
 
 router = routers.DefaultRouter() 
 # users_views 
 router.register(r"users", users_views.UserViewSet, basename='users') 
+router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
+# router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 # softdesk_views 
 router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects') 
 
@@ -33,14 +42,24 @@ urlpatterns = [
     # api 
     path('api-auth/', include('rest_framework.urls')), 
     # users app 
-    # path('users/', include(router.urls)), 
     path('', include(router.urls)), 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
-    # path('users/signup/', users_views.SignupView.as_view(), name='signup'), 
+    path('profile/', users_views.GetUserProfileView.as_view({'get':'get'}), name='profile'), 
+    path('update_profile/', users_views.UpdateProfileView.as_view({'put':'update'}), name='update_profile'), 
+    path('add_project_contributor/', users_views.AddProjectContributorView.as_view({'post': 'post'}), name='add_contributor'), 
+    path('logout/', users_views.LogoutView.as_view(), name='logout'), 
     # softdesk app 
-    path('new_project/', softdesk_views.NewProjectView.as_view(), name='new_project'), 
-    # path('new_project/', softdesk_views.new_project, name='create-ticket'), 
+
     # admin 
     path('admin/', admin.site.urls), 
 
-]
+    # JWT login 
+    path('jwt/get_token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
+    path('jwt/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
+
+    # Doc: drf_spectacular (dl YAML file) 
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Doc: UI: 
+    path('api/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), 
+] 

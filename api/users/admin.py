@@ -16,24 +16,24 @@ class UserAdmin(BaseUserAdmin):
         'is_staff', 
     ) 
 
-    # # en-tête de colonnes : 
-    # def groups_ids(self, user): 
-    #     user_group_ids = user.groups.values_list('id', flat=True)  # QuerySet Object  
-    #     group_ids_as_list = list(user_group_ids)  # QuerySet to `list`
+#     # en-tête de colonnes : 
+#     def groups_ids(self, User): 
+#         user_group_ids = User.groups.values_list('id', flat=True)  # QuerySet Object  
+#         group_ids_as_list = list(user_group_ids)  # QuerySet to `list`
 
-    #     text = group_ids_as_list  
-    #     return text 
-    # groups_ids.short_description = 'Groups ids'
+#         text = group_ids_as_list  
+#         return text 
+#     groups_ids.short_description = 'Groups ids'
 
-    # def groups_names(self, user): 
-    #     user_group_names = user.groups.values_list('name', flat=True)  # QuerySet Object 
-    #     group_names_as_list = list(user_group_names)  # QuerySet to `list` 
+#     def groups_names(self, User): 
+#         user_group_names = User.groups.values_list('name', flat=True)  # QuerySet Object 
+#         group_names_as_list = list(user_group_names)  # QuerySet to `list` 
 
-    #     text = group_names_as_list  
-    #     return text 
-    # groups_names.short_description = 'Groups names' 
+#         text = group_names_as_list  
+#         return text 
+#     groups_names.short_description = 'Groups names' 
 
-# Re-register UserAdmin
+# # Re-register UserAdmin
 admin.site.unregister(User) 
 admin.site.register(User, UserAdmin) 
 
@@ -47,6 +47,8 @@ class UserProfileAdmin(admin.ModelAdmin):
         'data_can_be_shared', 
         'created_time', 
     ) 
+
+
 admin.site.register(UserProfile, UserProfileAdmin) 
 
 

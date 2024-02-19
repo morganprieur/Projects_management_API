@@ -84,6 +84,12 @@ ou les lancer depuis le fichier softdesk/commands.migrate_pipenv
 ou lancer le container en décommentant la ligne "command" :    
 `docker composer up --build --remove_orphans` 
 
+================ 
+
+## Créer un groupe 
+(Leçon OCR)[https://openclassrooms.com/fr/courses/7192426-allez-plus-loin-avec-le-framework-django/7388713-attribuez-des-permissions-en-utilisant-les-groupes]
+
+
 
 
 
