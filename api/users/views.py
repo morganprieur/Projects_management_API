@@ -11,6 +11,7 @@ from users.serializers import (
 
 from rest_framework import generics, viewsets 
 from rest_framework.generics import CreateAPIView 
+from django.views.generic.edit import DeleteView 
 from rest_framework.parsers import JSONParser 
 from rest_framework.permissions import IsAuthenticated 
 from rest_framework.response import Response 
@@ -54,6 +55,20 @@ class SignupView(CreateAPIView):
         return Response(serializer.errors, status=400) 
 
 
+class DeleteUserView(generics.DestroyAPIView): 
+    queryset = UserProfile.objects.all() 
+    serializer_class = UserPofileSerializer 
+
+""" 
+class ContributorListView(APIView):
+    permission_classes = [IsAuthenticated, ContributorAccessPermission]
+
+    def get(self, request, project_id, *args, **kwargs):
+        contributors = Contributor.objects.filter(project=project_id)
+        serializer = ContributorSerializer(contributors, many=True)
+        return Response(serializer.data)
+""" 
+
 class GetUserProfileView(viewsets.ModelViewSet): 
     serializer_class = UserPofileSerializer 
     permission_classes = [IsAuthenticated] 
@@ -68,11 +83,10 @@ class GetUserProfileView(viewsets.ModelViewSet):
         return Response(serializer.data) 
 
 
-# TODO: Voir si possible de simplifier (viewsets) 
 class UpdateProfileView(viewsets.ModelViewSet): 
     serializer_class = UserPofileSerializer 
     permission_classes = [IsAuthenticated] 
-    queryset = UserProfile.objects.get(user__username='root') 
+    queryset = UserProfile.objects.all()  # get(user__username='root') 
 
     def update(self, request): 
         # print('request user : ', request.user) 
@@ -107,14 +121,14 @@ class ContributorViewSet(viewsets.ModelViewSet):
 
     def create(self, request): 
         data = request.data 
-        user = User.objects.get(id=data['user']) 
-        data['user'] = {} 
-        data['user']['username'] = user.username 
-        data['user']['password'] = user.password 
-        project = Project.objects.get(id=data['project']) 
-        data['project'] = {} 
-        # data['project']['id'] = project.id 
-        data['project']['name'] = project.name 
+        # user = User.objects.get(id=data['user']) 
+        # data['user'] = {} 
+        # data['user']['username'] = user.username 
+        # data['user']['password'] = user.password 
+        # project = Project.objects.get(id=data['project']) 
+        # data['project'] = {} 
+        # # data['project']['id'] = project.id 
+        # data['project']['name'] = project.name 
         print(data) 
         serializer = ContributorSerializer(data=data) 
         # print('serializer.initial_data : ', serializer.initial_data) 
@@ -122,20 +136,4 @@ class ContributorViewSet(viewsets.ModelViewSet):
             serializer.save() 
             return Response(serializer.data, status=200) 
         return Response(serializer.errors, status=400) 
-
-
-# class AddProjectContributorView(viewsets.ModelViewSet): 
-#     serializer_class = ContributorSerializer 
-#     permission_classes = [IsAuthenticated] 
-#     # quesryset = Contributor.objects.all() 
-
-#     def post(self, request): 
-#         data = JSONParser().parse(request) 
-#         # print(data) 
-#         serializer = ContributorSerializer(data=data) 
-#         if serializer.is_valid(): 
-#             serializer.save() 
-#             return Response(serializer.data, status=200) 
-#         return Response(serializer.errors, status=400) 
-
 

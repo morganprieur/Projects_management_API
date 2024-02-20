@@ -16,8 +16,8 @@ class ContributorSerializer(serializers.ModelSerializer):
     """ Class to serialize/deserialize a Contributor instance, 
         from the Contributor model. 
     """ 
-    project = ProjectSerializer() 
-    user = UserSerializer() 
+    # project = ProjectSerializer() 
+    # user = UserSerializer() 
     class Meta: 
         model = Contributor 
         fields = ( 
@@ -33,14 +33,14 @@ class ContributorSerializer(serializers.ModelSerializer):
         print(f'user_data PS32 : {user_data}') 
 
         get_user = User.objects.get( 
-            username=user_data['username']) 
+            username=user_data) 
         print(f'get_user PS41 : {get_user}') 
 
         project_data = validated_data.pop('project') 
         print(f'project_data PS40 : {project_data}') 
 
         get_project = Project.objects.get( 
-            name=project_data['name']) 
+            name=project_data.name) 
         print(f'project PS44 : {get_project}') 
 
         new_contributor = Contributor.objects.create( 

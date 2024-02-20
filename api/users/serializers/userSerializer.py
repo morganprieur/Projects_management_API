@@ -58,7 +58,8 @@ class UserPofileSerializer(serializers.ModelSerializer):
             'created_time', 
         ) 
 
-    def create(self, instance, validated_data): 
+    # def create(self, instance, validated_data): 
+    def create(self, validated_data): 
         # print('create instance UPS67 : ', instance) 
         # print('create validated_data UPS68 : ', validated_data) 
         if 'age' in validated_data.keys(): 
@@ -90,8 +91,6 @@ class UserPofileSerializer(serializers.ModelSerializer):
             print('profile : ', profile) 
             return profile 
 
-
-        
 
     # def update(self, validated_data): 
     #     print('update validated_data UPS84 : ', validated_data) 

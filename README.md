@@ -92,5 +92,15 @@ ou lancer le container en décommentant la ligne "command" :
 
 
 
+## Tests 
+
+*  Emplacement du fichier de test :    
+`api/users/tests.py`    
+
+*  Lancer les tests :     
+`python manage.py test users.tests -v 3` 
+Régler la quantité de détails avec `-v` : `3` = le maximum    
+
+
 
 
