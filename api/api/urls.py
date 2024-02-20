@@ -41,13 +41,15 @@ router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects')
 urlpatterns = [ 
     # api 
     path('api-auth/', include('rest_framework.urls')), 
+
     # users app 
     path('', include(router.urls)), 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     path('profile/', users_views.UserProfileView.as_view(), name='profile'), 
     path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
-    path('contributors_list/<project_id>/', users_views.ContributorsListView.as_view(), name='contributors'), 
+    path('project_contributors/<project_id>/', users_views.ContributorsListView.as_view(), name='contributors'), 
+
     # softdesk app 
 
     # admin 

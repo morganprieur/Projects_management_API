@@ -17,7 +17,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework.views import APIView 
 from users.permissions import IsAdminAuthenticated 
-
 # import des fonctions authenticate, login et logout 
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.decorators import login_required 
@@ -69,16 +68,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         serializer = UserPofileSerializer(profile) 
         return Response(serializer.data) 
 
-    def put(self, request): 
-        data = JSONParser().parse(request) 
-        profile = UserProfile.objects.get(user__username=request.user.username) 
-        
-        serializer = UserPofileSerializer(profile, data=data, partial=True) 
-        if serializer.is_valid(): 
-            serializer.save() 
-            return Response(serializer.data, status=201) 
-        return Response(serializer.errors, status=400) 
-
 
 class UserProfileView(APIView): 
     """ 
@@ -94,6 +83,22 @@ class UserProfileView(APIView):
         serializer = UserPofileSerializer(profile) 
         return Response(serializer.data) 
 
+    def put(self, request): 
+        data = JSONParser().parse(request) 
+        profile = UserProfile.objects.get(user__username=request.user.username) 
+
+        # Check if the updated age is greater than 15: 
+        if data['age'] < 15:
+            return Response( 
+                'Vous devez être âgé d\'au moins 15 ans.', 
+                status=400) 
+
+        serializer = UserPofileSerializer(profile, data=data, partial=True) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=201) 
+        return Response(serializer.errors, status=400) 
+
 
 class DeleteUserView(DestroyAPIView): 
     """ Deletes the UserProfile of the designed User. 
@@ -103,20 +108,6 @@ class DeleteUserView(DestroyAPIView):
     queryset = UserProfile.objects.all() 
     serializer_class = UserPofileSerializer 
     permission_classes = [IsAdminAuthenticated, IsAuthenticated] 
-
-
-class ContributorsListView(APIView): 
-    """ Displays a list of the contributors of a given project. 
-        Everyon allowed to see them. 
-        params: 
-            project_id (int): The id of the desired Project. 
-    """ 
-    # permission_classes = [IsAuthenticated] 
-
-    def get(self, request, project_id, *args, **kwargs): 
-        contributors = Contributor.objects.filter(project=project_id) 
-        serializer = ContributorSerializer(contributors, many=True) 
-        return Response(serializer.data) 
 
 
 class LogoutView(APIView): 
@@ -129,7 +120,6 @@ class LogoutView(APIView):
         return Response({'message': "Logout successful"}) 
 
 
-# BUG: username + password + name projet obligatoires 
 class ContributorViewSet(viewsets.ModelViewSet): 
     """ Set a User to access and contribute to a Project. 
         Only the author of the Project is allowed to add a Contributor. 
@@ -148,10 +138,37 @@ class ContributorViewSet(viewsets.ModelViewSet):
         connected_user = User.objects.get(username=request.user) 
         project = Project.objects.get(pk=data['project']) 
         if connected_user != project.author: 
-            return Response(status=403) 
+            print('project id : ', project.id, 'user id : ', connected_user.id) 
+            return Response( 
+                'Seul l\'auteur du projet peut ajouter un contributeur.', 
+                status=403) 
         serializer = ContributorSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 
             return Response(serializer.data, status=200) 
         return Response(serializer.errors, status=400) 
+
+
+class ContributorsListView(APIView): 
+    """ Displays a list of the contributors of a given project. 
+        Everyone authenticated is allowed to see a project's contributors. 
+        Args: 
+            ModelViewSet: Viewset related of a Model, 
+                indicated into queryset. 
+            project_id (int): The id of the desired Project. 
+        Returns: 
+            Response: The data or the reason of not serve the data. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request, project_id): 
+        serializer = ContributorSerializer 
+        project = Project.objects.get(id=project_id) 
+        contributors = Contributor.objects.filter(project=project) 
+
+        project_contribs = [] 
+        for contrib in contributors: 
+            project_contribs.append(contrib.user) 
+            serializer = ContributorSerializer(contrib) 
+        return Response(serializer.data, status=200) 
 

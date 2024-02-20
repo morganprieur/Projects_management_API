@@ -8,8 +8,6 @@ class UserProfile(models.Model):
         User, 
         on_delete=models.CASCADE, 
         related_name='profile_user', 
-        # blank=True, 
-        # null=True, 
     ) 
     age = models.IntegerField( 
         blank=True, 

@@ -1,6 +1,7 @@
 
 from rest_framework import permissions 
-
+from users.models import Contributor 
+from softdesk.models import Project 
 
 class IsAdminAuthenticated(permissions.BasePermission): 
     """ permission class that permits only superusers to request 
@@ -11,7 +12,10 @@ class IsAdminAuthenticated(permissions.BasePermission):
     """ 
     def has_permission(self, request, view): 
         # Access allowed only for superusers. 
-        return bool(request.user and request.user.is_authenticated and request.user.is_superuser) 
+        return bool( 
+            request.user and 
+            request.user.is_authenticated and 
+            request.user.is_superuser) 
 
 
 # def get_users_groups(request): 

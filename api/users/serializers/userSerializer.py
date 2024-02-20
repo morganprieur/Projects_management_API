@@ -58,29 +58,21 @@ class UserPofileSerializer(serializers.ModelSerializer):
             'created_time', 
         ) 
 
-    # def create(self, instance, validated_data): 
-    def create(self, validated_data): 
-        # print('create instance UPS67 : ', instance) 
-        # print('create validated_data UPS68 : ', validated_data) 
+    def create(self, instance, validated_data): 
         if 'age' in validated_data.keys(): 
             if validated_data['age'] > 15: 
-                # print('if age > 15') 
                 if 'user' in validated_data.keys(): 
-                    # print('user yes') 
                     user_data = validated_data.pop('user') 
                     user_data['password'] = make_password(user_data['password']) 
 
                     new_user = User.objects.create(**user_data) 
                     get_user = User.objects.last() 
-                    # print('last_user : ', get_user) 
 
                     return UserProfile.objects.create( 
                         user = get_user, 
                         **validated_data, 
                     ) 
-            else:  
-                # print('else') 
-                # print(validated_data['age']) 
+            else: 
                 age = minimum_age(validated_data['age']) 
                 return False 
         else: 
@@ -88,17 +80,6 @@ class UserPofileSerializer(serializers.ModelSerializer):
                 **validated_data, 
             ) 
             profile.save() 
-            print('profile : ', profile) 
             return profile 
-
-
-    # def update(self, validated_data): 
-    #     print('update validated_data UPS84 : ', validated_data) 
-    #     # updated_profile = {} 
-    #     # updated_profile['can_be_contacted'] = validated_data['can_be_contacted'] 
-    #     # updated_profile['data_can_be_shared'] = validated_data['data_can_be_shared'] 
-    #     # return UserProfile.objects.update( 
-    #     #     **updated_profile, 
-    #     # ) 
-
+        
 
