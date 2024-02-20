@@ -171,12 +171,6 @@ class ContributorViewSet(viewsets.ModelViewSet):
 class ContributorsListView(APIView): 
     """ Displays a list of the contributors of a given project. 
         Everyone authenticated is allowed to see a project's contributors. 
-        Args: 
-            ModelViewSet: Viewset related of a Model, 
-                indicated into queryset. 
-            project_id (int): The id of the desired Project. 
-        Returns: 
-            Response: The data or the reason of not serve the data. 
     """ 
     permission_classes = [IsAuthenticated] 
 
@@ -190,4 +184,29 @@ class ContributorsListView(APIView):
             project_contribs.append(contrib.user) 
             serializer = ContributorSerializer(contrib) 
         return Response(serializer.data, status=200) 
+
+
+class ContributionsListView(APIView): 
+    """ Displays a list of the contributions of a user. 
+        Only the user is allowed to see his contributions. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request): 
+        serializer = ContributorSerializer 
+        user = request.user 
+        contributions = Contributor.objects.filter(user=user) 
+        print(user) 
+        print(contributions) 
+
+        # project = Project.objects.get(id=project_id) 
+        # contributors = Contributor.objects.filter(project=project) 
+
+        contribs = [] 
+        for contrib in contributions: 
+            contribs.append(contrib) 
+            # serializer = ContributorSerializer(contrib) 
+        serializer = ContributorSerializer(contribs) 
+        return Response(serializer.data, status=200) 
+
 

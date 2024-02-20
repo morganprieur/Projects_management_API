@@ -48,7 +48,8 @@ urlpatterns = [
     path('profile/', users_views.UserProfileView.as_view(), name='profile'), 
     path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
-    path('project_contributors/<project_id>/', users_views.ContributorsListView.as_view(), name='contributors'), 
+    path('project_contributors/<project_id>/', users_views.ContributorsListView.as_view()), 
+    path('user_contributions/', users_views.ContributionsListView.as_view()), 
 
     # softdesk app 
 
