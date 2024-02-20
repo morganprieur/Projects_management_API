@@ -132,7 +132,7 @@ class LogoutView(APIView):
 # BUG: username + password + name projet obligatoires 
 class ContributorViewSet(viewsets.ModelViewSet): 
     """ Set a User to access and contribute to a Project. 
-        Check if the connected User is the author of the Project. 
+        Only the author of the Project is allowed to add a Contributor. 
         Args: 
             ModelViewSet: Viewset related of a Model, indicated into queryset. .
         Returns: 
@@ -144,6 +144,11 @@ class ContributorViewSet(viewsets.ModelViewSet):
 
     def create(self, request): 
         data = request.data 
+        # Check if the connected user is the author of the project: 
+        connected_user = User.objects.get(username=request.user) 
+        project = Project.objects.get(pk=data['project']) 
+        if connected_user != project.author: 
+            return Response(status=403) 
         serializer = ContributorSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 

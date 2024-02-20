@@ -29,14 +29,12 @@ class ContributorSerializer(serializers.ModelSerializer):
     def create(self, validated_data): 
         user_data = validated_data.pop('user') 
         # print(f'user_data PS32 : {user_data}') 
-
         get_user = User.objects.get( 
             username=user_data) 
         # print(f'get_user PS41 : {get_user}') 
 
         project_data = validated_data.pop('project') 
         # print(f'project_data PS40 : {project_data}') 
-
         get_project = Project.objects.get( 
             name=project_data.name) 
         # print(f'project PS44 : {get_project}') 
