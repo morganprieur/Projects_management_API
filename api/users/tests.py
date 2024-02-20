@@ -74,7 +74,7 @@ class IsAdminUserTest(TestCase):
             is_superuser=True 
         ) 
 
-    def testOnlyAdminCanGetUser(self): 
+    def testOnlyAdminCanGetUsers(self): 
         superuser = User.objects.get(username='foo') 
         factory = RequestFactory() 
         # request = factory.delete('/') 
@@ -100,4 +100,32 @@ class IsAdminUserTest(TestCase):
             request, None 
         ) 
         self.assertTrue(permission) 
+
+
+    # def testOnlyAuthorCanDeleteContributor(self): 
+    #     user = User.objects.create(username='bar') 
+    #     # user.save() 
+    #     user_profile = UserProfile.objects.create( 
+    #         user=user, age=20) 
+    #     author = User.objects.create(username="baz") 
+    #     # author = User.save() 
+    #     author_profile = UserProfile.objects.create( 
+    #         user=author, age=25) 
+    #     project = Project.objects.create( 
+    #         author=author, name='name of the project') 
+    #     contributor = Contributor.objects.create( 
+    #         user=user, project=project) 
+    #     user_contrib = Contributor.objects.get(user__username='bar') 
+    #     self.assertEquals(user_contrib.id, 3) 
+
+    #     factory = RequestFactory() 
+    #     request.user = user 
+    #     request = factory.delete('contributors/2/') 
+
+    #     # response = contributor.get(reverse('contributors')) 
+    #     # # client.get(reverse('blog_category_list'))
+    #     # # response = client.get(category.get_absolute_url())
+    #     response.status_code 
+
+    #     self.assertEquals(response.status_code, 200) 
 

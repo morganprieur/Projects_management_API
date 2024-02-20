@@ -32,6 +32,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class SignupView(CreateAPIView): 
+    """ 
+        Sets a user to interact with the projects. 
+    """ 
 
     def post(self, request): 
         """ Sends data for création of a Tech_site instance, 
@@ -147,6 +150,22 @@ class ContributorViewSet(viewsets.ModelViewSet):
             serializer.save() 
             return Response(serializer.data, status=200) 
         return Response(serializer.errors, status=400) 
+
+
+    def destroy(self, request, pk): 
+        # Check if the connected user is the author of the project: 
+        connected_user = User.objects.get(username=request.user) 
+        contributor = Contributor.objects.get(pk=pk) 
+        project = Project.objects.get(pk=contributor.project.id) 
+        serializer = ContributorSerializer(contributor)
+        if connected_user != project.author: 
+            print('project author : ', project.author, 'user id : ', connected_user.id) 
+            return Response( 
+                'Seul l\'auteur du projet peut le supprimer.', 
+                status=403) 
+        else: 
+            serializer.delete() 
+            return Response(serializer.data, status=204) 
 
 
 class ContributorsListView(APIView): 
