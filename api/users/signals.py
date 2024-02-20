@@ -7,8 +7,6 @@ from django.dispatch import receiver
 from datetime import datetime 
 
 
-# Quand on crée un Project : 
-#   un Contributor est créé 
 @receiver(post_save, sender=Project) 
 def create_contributor(sender, instance, created, **kwargs): 
     """ When a Project instance is created: 
@@ -36,15 +34,12 @@ def create_contributor(sender, instance, created, **kwargs):
 
 
 @receiver(post_delete, sender=UserProfile) 
-def delete_profile(sender, instance, using, **kwargs): 
-    """ When a Project instance is created: 
-            creates a Contributor.  
+def delete_profile(sender, instance, **kwargs):  # using, 
+    """ When a UserProfile instance is deleted: 
+            deletes the linked user.  
         Args:
-            sender (Project): the model sends a signal when an instance is created 
-            instance (Project): the just created Project 
-            created (bool): the Project instance is created True/False : trigger. 
-                If False, the program exits the method.  
+            sender (UserProfile): the model sends a signal when an instance is deleted. 
+            instance (UserProfile): the just deleted UserProfile. 
     """ 
-    # print(instance.id) 
     User.objects.get(id=instance.user.id).delete() 
 

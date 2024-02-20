@@ -34,7 +34,7 @@ router = routers.DefaultRouter()
 # users_views 
 router.register(r"users", users_views.UserViewSet, basename='users') 
 router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
-# router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
+router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 # softdesk_views 
 router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects') 
 
@@ -44,11 +44,10 @@ urlpatterns = [
     # users app 
     path('', include(router.urls)), 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
-    path('profile/', users_views.GetUserProfileView.as_view({'get':'get'}), name='profile'), 
-    path('update_profile/', users_views.UpdateProfileView.as_view({'put':'update'}), name='update_profile'), 
+    path('profile/', users_views.UserProfileView.as_view(), name='profile'), 
     path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
-    # path('add_project_contributor/', users_views.AddProjectContributorView.as_view({'post': 'post'}), name='add_contributor'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
+    path('contributors_list/<project_id>/', users_views.ContributorsListView.as_view(), name='contributors'), 
     # softdesk app 
 
     # admin 
