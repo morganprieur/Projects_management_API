@@ -145,6 +145,17 @@ class ContributorViewSet(viewsets.ModelViewSet):
             return Response( 
                 'Seul l\'auteur du projet peut ajouter un contributeur.', 
                 status=403) 
+        # Check if the user-project binome does not already exist 
+        contributors = Contributor.objects.filter(project=project) 
+        already = [] 
+        for contrib in contributors: 
+            already.append(contrib.user.username) 
+        # print(already) 
+        user = User.objects.get(id=data['user']) 
+        if user.username in already: 
+            return Response( 
+                'Cet utilisateur est déjà contributeur sur ce projet.', 
+                status=403) 
         serializer = ContributorSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 
