@@ -1,5 +1,6 @@
 
 from django.contrib.auth.models import User 
+from softdesk.models import Project 
 from users.models import (UserProfile, Contributor) 
 from users.serializers import ( 
     UserSerializer, 
@@ -9,12 +10,13 @@ from users.serializers import (
 # from django_filters import rest_framework as filters 
 
 from rest_framework import generics, viewsets 
-from rest_framework.generics import CreateAPIView 
+from rest_framework.generics import CreateAPIView, DestroyAPIView 
+from django.views.generic.edit import DeleteView 
 from rest_framework.parsers import JSONParser 
 from rest_framework.permissions import IsAuthenticated 
 from rest_framework.response import Response 
 from rest_framework.views import APIView 
-
+from users.permissions import IsAdminAuthenticated 
 # import des fonctions authenticate, login et logout 
 from django.contrib.auth import authenticate, login, logout 
 from django.contrib.auth.decorators import login_required 
@@ -26,12 +28,13 @@ class UserViewSet(viewsets.ModelViewSet):
     """ 
     queryset = User.objects.all().order_by('-date_joined') 
     serializer_class = UserSerializer 
-    permission_classes = [IsAuthenticated] 
-    # permission_classes = [permissions.IsAuthenticated] 
-    # permission_classes = [IsAdminAuthenticated, ] 
+    permission_classes = [IsAuthenticated, IsAdminAuthenticated] 
 
 
 class SignupView(CreateAPIView): 
+    """ 
+        Sets a user to interact with the projects. 
+    """ 
 
     def post(self, request): 
         """ Sends data for création of a Tech_site instance, 
@@ -46,8 +49,6 @@ class SignupView(CreateAPIView):
                     400 with the error if the request has not been completely executed. 
         """ 
         data = JSONParser().parse(request) 
-        # print('data : ', data) 
-        # Save the data to the serializer for validating and saving them into the DB. 
         serializer = UserPofileSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 
@@ -55,68 +56,138 @@ class SignupView(CreateAPIView):
         return Response(serializer.errors, status=400) 
 
 
-class GetUserProfileView(viewsets.ModelViewSet): 
+class UserProfileViewSet(viewsets.ModelViewSet): 
+    """ 
+        The UserProfile's views of the connected User. 
+    """ 
+    queryset = UserProfile.objects.all() 
+    serializer_class = UserPofileSerializer 
+    permission_classes = [IsAuthenticated, IsAdminAuthenticated] 
+    model = UserProfile 
+
+    def get(self, request): 
+        user = request.user 
+        profile = UserProfile.objects.get(user=user) 
+        serializer = UserPofileSerializer(profile) 
+        return Response(serializer.data) 
+
+
+class UserProfileView(APIView): 
+    """ 
+        The UserProfile's views of the connected User. 
+    """ 
     serializer_class = UserPofileSerializer 
     permission_classes = [IsAuthenticated] 
     model = UserProfile 
 
     def get(self, request): 
         user = request.user 
-        # print('user : ', user) 
         profile = UserProfile.objects.get(user=user) 
-        # print('profile : ', profile) 
         serializer = UserPofileSerializer(profile) 
         return Response(serializer.data) 
 
-
-class UpdateProfileView(viewsets.ModelViewSet): 
-    serializer_class = UserPofileSerializer 
-    permission_classes = [IsAuthenticated] 
-    queryset = UserProfile.objects.get(user__username='root') 
-
-    def update(self, request): 
-        # print('request user : ', request.user) 
+    def put(self, request): 
         data = JSONParser().parse(request) 
         profile = UserProfile.objects.get(user__username=request.user.username) 
-        # print('data : ', data) 
-        
+
+        # Check if the updated age is greater than 15: 
+        if data['age'] < 15:
+            return Response( 
+                'Vous devez être âgé d\'au moins 15 ans.', 
+                status=400) 
+
         serializer = UserPofileSerializer(profile, data=data, partial=True) 
-        # print('serializer initial : ', serializer.initial_data) 
         if serializer.is_valid(): 
-            # print('valid') 
-            # print('serializer validated : ', serializer.validated_data) 
             serializer.save() 
             return Response(serializer.data, status=201) 
         return Response(serializer.errors, status=400) 
 
 
-class LogoutView(APIView): 
+class DeleteUserView(DestroyAPIView): 
+    """ Deletes the UserProfile of the designed User. 
+        A Signal will delete the user himself 
+        after the deletion of the UserProfile. 
+    """ 
+    queryset = UserProfile.objects.all() 
+    serializer_class = UserPofileSerializer 
+    permission_classes = [IsAdminAuthenticated, IsAuthenticated] 
 
+
+class LogoutView(APIView): 
+    """ 
+        View to logout the user. 
+    """ 
+    permission_classes = [IsAuthenticated] 
     def post(self, request): 
-        print('request : ', request)
-        print('request user : ', request.user)
         logout(request) 
         return Response({'message': "Logout successful"}) 
 
 
 class ContributorViewSet(viewsets.ModelViewSet): 
+    """ Set a User to access and contribute to a Project. 
+        Only the author of the Project is allowed to add a Contributor. 
+        Args: 
+            ModelViewSet: Viewset related of a Model, indicated into queryset. .
+        Returns: 
+            Response: The data or the reason of not serve the data. 
+    """ 
     serializer_class = ContributorSerializer 
     permission_classes = [IsAuthenticated] 
     queryset = Contributor.objects.all() 
 
-
-class AddProjectContributorView(viewsets.ModelViewSet): 
-    serializer_class = ContributorSerializer 
-    permission_classes = [IsAuthenticated] 
-    # quesryset = Contributor.objects.all() 
-
-    def post(self, request): 
-        data = JSONParser().parse(request) 
-        # print(data) 
+    def create(self, request): 
+        data = request.data 
+        # Check if the connected user is the author of the project: 
+        connected_user = User.objects.get(username=request.user) 
+        project = Project.objects.get(pk=data['project']) 
+        if connected_user != project.author: 
+            print('project id : ', project.id, 'user id : ', connected_user.id) 
+            return Response( 
+                'Seul l\'auteur du projet peut ajouter un contributeur.', 
+                status=403) 
         serializer = ContributorSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 
             return Response(serializer.data, status=200) 
         return Response(serializer.errors, status=400) 
+
+
+    def destroy(self, request, pk): 
+        # Check if the connected user is the author of the project: 
+        connected_user = User.objects.get(username=request.user) 
+        contributor = Contributor.objects.get(pk=pk) 
+        project = Project.objects.get(pk=contributor.project.id) 
+        serializer = ContributorSerializer(contributor)
+        if connected_user != project.author: 
+            print('project author : ', project.author, 'user id : ', connected_user.id) 
+            return Response( 
+                'Seul l\'auteur du projet peut le supprimer.', 
+                status=403) 
+        else: 
+            serializer.delete() 
+            return Response(serializer.data, status=204) 
+
+
+class ContributorsListView(APIView): 
+    """ Displays a list of the contributors of a given project. 
+        Everyone authenticated is allowed to see a project's contributors. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request, project_id): 
+        contributors = Contributor.objects.filter(project=project_id) 
+        serializer = ContributorSerializer(contributors, many=True) 
+        return Response(serializer.data, status=200) 
+
+class ContributionsListView(APIView): 
+    """ Displays a list of the contributions of a user. 
+        Only the user is allowed to see his contributions. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request): 
+        contributions = Contributor.objects.filter(user=request.user) 
+        serializer = ContributorSerializer(contributions, many=True) 
+        return Response(serializer.data, status=200) 
 
 

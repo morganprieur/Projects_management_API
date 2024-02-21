@@ -13,11 +13,10 @@ from rest_framework import serializers
 
 
 class ContributorSerializer(serializers.ModelSerializer): 
-    """ Class to serialize/deserialize a Contributor instance, 
+    """ 
+        Class to serialize/deserialize a Contributor instance, 
         from the Contributor model. 
     """ 
-    project = ProjectSerializer() 
-    user = UserSerializer() 
     class Meta: 
         model = Contributor 
         fields = ( 
@@ -27,4 +26,19 @@ class ContributorSerializer(serializers.ModelSerializer):
             'created_time', 
         ) 
 
+    def create(self, validated_data): 
+        user_data = validated_data.pop('user') 
+        get_user = User.objects.get( 
+            username=user_data) 
+
+        project_data = validated_data.pop('project') 
+        get_project = Project.objects.get( 
+            name=project_data.name) 
+
+        new_contributor = Contributor.objects.create( 
+            user=get_user, 
+            project=get_project, 
+            **validated_data 
+        ) 
+        return new_contributor 
 

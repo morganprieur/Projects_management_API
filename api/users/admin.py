@@ -48,7 +48,6 @@ class UserProfileAdmin(admin.ModelAdmin):
         'created_time', 
     ) 
 
-
 admin.site.register(UserProfile, UserProfileAdmin) 
 
 
