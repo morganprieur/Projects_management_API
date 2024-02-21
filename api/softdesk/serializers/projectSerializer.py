@@ -21,18 +21,3 @@ class ProjectSerializer(serializers.ModelSerializer):
             'created_time', 
         ) 
 
-    # Custom create() 
-    def create(self, validated_data): 
-
-        if 'author' in validated_data.keys(): 
-            author_data = validated_data.pop('author') 
-
-            get_author = User.objects.get( 
-                username=author_data) 
-
-            new_project = Project.objects.create( 
-                author=get_author, 
-                **validated_data 
-            ) 
-            return new_project 
-
