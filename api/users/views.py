@@ -95,7 +95,7 @@ class UserProfileView(APIView):
         return Response(serializer.errors, status=400) 
 
     def delete(self, request): 
-        """ Delete the connected user's profile. 
+        """ Deletes the connected user's profile. 
             A Signal will delete the User instance after the UserProfile will 
             be deleted. 
             Only the connected user himself can do this 
@@ -192,7 +192,7 @@ class ContributorViewSet(viewsets.ModelViewSet):
         project = Project.objects.get(pk=contributor.project.id) 
         serializer = ContributorSerializer(contributor)
         if connected_user != project.author: 
-            print('project author : ', project.author, 'user id : ', connected_user.id) 
+            # print('project author : ', project.author, 'user id : ', connected_user.id) 
             return Response( 
                 'Seul l\'auteur du projet peut le supprimer.', 
                 status=403) 

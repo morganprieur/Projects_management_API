@@ -37,6 +37,7 @@ router.register(r"contributors", users_views.ContributorViewSet, basename='contr
 router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 # softdesk_views 
 router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects') 
+router.register(r"issues", softdesk_views.IssueViewSet, basename='issues') 
 
 urlpatterns = [ 
     # api 
