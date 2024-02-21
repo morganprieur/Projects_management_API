@@ -68,14 +68,39 @@ class ApiTests(TestCase):
 class IsAdminUserTest(TestCase): 
     @classmethod 
     def setUpTestData(self): 
-        User.objects.create( 
-            username='foo', 
+        user = User.objects.create( 
+            username='user', 
             is_staff=True, 
             is_superuser=True 
         ) 
+        user_profile = UserProfile.objects.create( 
+            user=user, age=20) 
+        author = User.objects.create( 
+            username='author' 
+        ) 
+        user_profile = UserProfile.objects.create( 
+            user=author, age=18) 
+        contributor = User.objects.create( 
+            username='contributor' 
+        ) 
+        user_profile = UserProfile.objects.create( 
+            user=contributor, age=16) 
+        project = Project.objects.create( 
+            author=author, 
+            name='Name project', 
+        ) 
+        Contributor.objects.create( 
+            user=user, 
+            project=project, 
+        ) 
+        Contributor.objects.create( 
+            user=contributor, 
+            project=project, 
+        ) 
+
 
     def testOnlyAdminCanGetUsers(self): 
-        superuser = User.objects.get(username='foo') 
+        superuser = User.objects.get(username='user') 
         factory = RequestFactory() 
         # request = factory.delete('/') 
         request = factory.get('users/') 
@@ -89,7 +114,7 @@ class IsAdminUserTest(TestCase):
 
 
     def testOnlyAdminCanGetProfiles(self): 
-        superuser = User.objects.get(username='foo') 
+        superuser = User.objects.get(username='user') 
         factory = RequestFactory() 
 
         request = factory.get('profiles/') 
@@ -103,29 +128,16 @@ class IsAdminUserTest(TestCase):
 
 
     # def testOnlyAuthorCanDeleteContributor(self): 
-    #     user = User.objects.create(username='bar') 
-    #     # user.save() 
-    #     user_profile = UserProfile.objects.create( 
-    #         user=user, age=20) 
-    #     author = User.objects.create(username="baz") 
-    #     # author = User.save() 
-    #     author_profile = UserProfile.objects.create( 
-    #         user=author, age=25) 
-    #     project = Project.objects.create( 
-    #         author=author, name='name of the project') 
-    #     contributor = Contributor.objects.create( 
-    #         user=user, project=project) 
-    #     user_contrib = Contributor.objects.get(user__username='bar') 
-    #     self.assertEquals(user_contrib.id, 3) 
+    #     user = User.objects.get(username='user') 
+    #     author = User.objects.get(username='author') 
+    #     contributor = User.objects.get(username='contributor') 
+    #     self.assertEquals(user.id, 2) 
+    #     self.assertEquals(author.id, 3) 
+    #     self.assertEquals(contributor.id, 4) 
 
     #     factory = RequestFactory() 
-    #     request.user = user 
-    #     request = factory.delete('contributors/2/') 
+    #     request = factory.delete('contributors/1/') 
+    #     request.user = contributor 
 
-    #     # response = contributor.get(reverse('contributors')) 
-    #     # # client.get(reverse('blog_category_list'))
-    #     # # response = client.get(category.get_absolute_url())
-    #     response.status_code 
-
-    #     self.assertEquals(response.status_code, 200) 
+    #     self.assertFalse(request)  # fail --> trouver comment tester ça 
 

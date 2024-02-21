@@ -175,16 +175,9 @@ class ContributorsListView(APIView):
     permission_classes = [IsAuthenticated] 
 
     def get(self, request, project_id): 
-        serializer = ContributorSerializer 
-        project = Project.objects.get(id=project_id) 
-        contributors = Contributor.objects.filter(project=project) 
-
-        project_contribs = [] 
-        for contrib in contributors: 
-            project_contribs.append(contrib.user) 
-            serializer = ContributorSerializer(contrib) 
+        contributors = Contributor.objects.filter(project=project_id) 
+        serializer = ContributorSerializer(contributors, many=True) 
         return Response(serializer.data, status=200) 
-
 
 class ContributionsListView(APIView): 
     """ Displays a list of the contributions of a user. 
@@ -193,20 +186,8 @@ class ContributionsListView(APIView):
     permission_classes = [IsAuthenticated] 
 
     def get(self, request): 
-        serializer = ContributorSerializer 
-        user = request.user 
-        contributions = Contributor.objects.filter(user=user) 
-        print(user) 
-        print(contributions) 
-
-        # project = Project.objects.get(id=project_id) 
-        # contributors = Contributor.objects.filter(project=project) 
-
-        contribs = [] 
-        for contrib in contributions: 
-            contribs.append(contrib) 
-            # serializer = ContributorSerializer(contrib) 
-        serializer = ContributorSerializer(contribs) 
+        contributions = Contributor.objects.filter(user=request.user) 
+        serializer = ContributorSerializer(contributions, many=True) 
         return Response(serializer.data, status=200) 
 
 
