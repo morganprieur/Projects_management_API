@@ -46,15 +46,14 @@ urlpatterns = [
     path('', include(router.urls)), 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     path('profile/', users_views.UserProfileView.as_view(), name='profile'), 
-    path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
     path('project_contributors/<project_id>/', users_views.ContributorsListView.as_view()), 
     path('user_contributions/', users_views.ContributionsListView.as_view()), 
 
     # softdesk app 
 
-    # admin 
-    path('admin/', admin.site.urls), 
+    # admin routes 
+    path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
 
     # JWT login 
     path('jwt/get_token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
@@ -65,4 +64,6 @@ urlpatterns = [
     # Doc: UI: 
     path('api/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), 
+    # Admin interface access 
+    path('admin/', admin.site.urls), 
 ] 
