@@ -16,7 +16,7 @@ class Issues(object):
 
 ISSUE_STATUS = ( 
     ("TODO", "TO DO"), 
-    ("IP", "IN PROGRESS"), 
+    ("WIP", "IN PROGRESS"), 
     ("FINISHED", "FINISHED"), 
 ) 
 ISSUE_PRIORITY = ( 

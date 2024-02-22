@@ -126,6 +126,7 @@ class LogoutView(APIView):
         return Response({'message': "Logout successful"}) 
 
 
+# class ContributorView(APIView): 
 class ContributorViewSet(viewsets.ModelViewSet): 
     """ Viewset of the Users who contribute to Projects. 
         Only a superuser is allowed to views all the contributor's records. 

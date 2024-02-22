@@ -16,13 +16,14 @@ from rest_framework.views import APIView
 # from django.db.models import Q 
 
 
-class ProjectsViewSet(viewsets.ModelViewSet): 
-    """ Viewset of the Project instances. """ 
-    queryset = Project.objects.all() 
-    serializer_class = ProjectSerializer 
+# class ProjectsViewSet(viewsets.ModelViewSet): 
+class ProjectView(APIView): 
+    """ Actions on a Project instance. """ 
+    # queryset = Project.objects.all() 
+    # serializer_class = ProjectSerializer 
     permission_classes = [IsAuthenticated] 
 
-    def create(self, request): 
+    def post(self, request): 
         """ Creates a new Project instance. 
             Only a connected user can do this. 
             A Signal will create the Contributor instance after 
@@ -40,6 +41,88 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=400) 
 
 
+# issue 
+class IssueView(APIView): 
+    """ Actions on an Issue instance. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def post(self, request): 
+        """ Creates a new Issue instance. 
+            Only the project\'s contributors are allowed 
+            to create an issue. 
+        """ 
+        user = User.objects.get(username=request.user) 
+        data = request.data 
+        # Check if the user is a contributor of the project. 
+        contributors = Contributor.objects.filter(project__id=data['project']) 
+        contribs_users = [contrib.user for contrib in contributors] 
+        if user not in contribs_users: 
+            return Response( 
+                'Seul un contributeur du projet peut créer un ticket.', 
+                status=403) 
+        else: 
+            data['author'] = user.pk 
+            serializer = IssueSerializer(data=data) 
+            if serializer.is_valid(): 
+                serializer.save() 
+                return Response(serializer.data, status=201) 
+            return Response(serializer.errors, status=400) 
+
+    def put(self, request, pk): 
+        """ Updates an Issue instance. 
+            Only the Issue's author is allowed to do that. 
+            He can attribute the issue to another of the issue's 
+            contributors. 
+        """ 
+        user = request.user 
+        data = request.data 
+        # Check if the connected user is the issue's author 
+        issue = Issue.objects.get(id=pk) 
+        if user != issue.author: 
+            return Response('Seul l\'auteur de l\'issue peut la modifier.', 
+                status=403) 
+        else: 
+            # Check if the new  is in the project.contributors 
+            project = Project.objects.get(id=issue.project.id) 
+            contributors = Contributor.objects.filter(project=project.id) 
+            contribs_ids = [contrib.user.id for contrib in contributors] 
+            if data['author'] not in contribs_ids: 
+                return Response('Le nouvel auteur doit être déjà contributeur du projet.', 
+                status=403) 
+            serializer = IssueSerializer(data=data, partial=True) 
+            if serializer.is_valid(): 
+                serializer.save() 
+                return Response(serializer.data, status=201) 
+            return Response(serializer.errors, status=400) 
+
+    def delete(self, request, pk): 
+        """ Deletes an Issue instance. 
+            Only the Issue's author is allowed to do that. 
+        """ 
+        user = User.objects.get(username=request.user) 
+        # check if the user is the issue's author 
+        issue = Issue.objects.get(id=pk) 
+        if user != issue.author: 
+            return Response('Seul l\'auteur du ticket peut le supprimer.', 
+                status=403) 
+        else: 
+            issue.delete() 
+            return Response(status=204) 
+
+
+class IssuesListView(APIView): 
+    """ Displays a list of all the issues. 
+        Everyone authenticated is allowed to see the issues. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request): 
+        issues = Issue.objects.all() 
+        serializer = IssueSerializer(issues, many=True) 
+        return Response(serializer.data, status=200) 
+
+
 class IssuesProjectListView(APIView): 
     """ Displays a list of the issues of a given project. 
         Everyone authenticated is allowed to see a project's issues. 
@@ -50,82 +133,6 @@ class IssuesProjectListView(APIView):
         issues = Issue.objects.filter(project=project_id) 
         serializer = IssueSerializer(issues, many=True) 
         return Response(serializer.data, status=200) 
-
-
-class IssuesViewSet(viewsets.ModelViewSet): 
-    """ Viewset of the Issue instances. 
-        Only the project's author is allowed to create an issue. 
-        Only the issue's author is allowed to update it. 
-        He is allowed to attribute the issue to another project's 
-        contributor. 
-    """ 
-    queryset = Issue.objects.all() 
-    serializer_class = IssueSerializer 
-    permission_classes = [IsAuthenticated] 
-
-    def create(self, request): 
-        """ Creates a new Issue instance. 
-            Only the project author is allowed to create an issue. 
-        """ 
-        user = User.objects.get(username=request.user) 
-        data = request.data 
-        project = Project.objects.get(id=data['project']) 
-        if user != project.author: 
-            return Response( 
-                'Seul l\'auteur du projet peut créer un ticket.', 
-                status=403) 
-        else: 
-            data['author'] = user.pk 
-            serializer = IssueSerializer(data=data) 
-            if serializer.is_valid(): 
-                serializer.save() 
-                return Response(serializer.data, status=201) 
-            return Response(serializer.errors, status=400) 
-
-
-class IssueView(APIView): 
-    """ Update and delte an Issue instance. 
-    """ 
-    def put(self, request, pk): 
-        """ Updates an Issue instance. 
-            Only the Issue's author is allowed to do that. 
-            He can attribute the issue to another of the issue's 
-            contributors. 
-        """ 
-        user = request.user 
-        data = request.data 
-        print(data) 
-        # Check if the connected user is the issue's author 
-        issue = Issue.objects.get(id=pk) 
-        if user != issue.author: 
-            return Response('Seul l\'auteur de l\'issue peut la modifier.', 
-                status=403) 
-        else: 
-            # Check if the data['author'] is in the projrct.contributors 
-            project = Project.objects.get(id=issue.project.id) 
-            contributors = Contributor.objects.filter(project=project.id) 
-            contribs_ids = [contrib.user.id for contrib in contributors] 
-            if data['author'] not in contribs_ids: 
-                return Response('Le nouvel auteur doit être déjà contributeur du projet.', 
-                status=403) 
-            serializer = IssueSerializer(issue, data=data, partial=True) 
-            if serializer.is_valid(): 
-                serializer.save() 
-                return Response(serializer.data, status=201) 
-
-    def delete(self, request, pk): 
-        """ Deletes an Issue instance. 
-            Only the Issue's author is allowed to do that. 
-        """ 
-        user = User.objects.get(username=request.user) 
-        # check if the user is the issue's author 
-        issue = Issue.objects.get(id=pk) 
-        if user != issue.author: 
-            return Response('Seul l\'auteur de l\'issue peut la supprimer.', 
-                status=403) 
-        else: 
-            issue.delete() 
-            return Response(status=204) 
 
 
 class IssuesUserListView(APIView): 
@@ -141,28 +148,43 @@ class IssuesUserListView(APIView):
         return Response(serializer.data, status=200) 
 
 
-class CommentsViewset(viewsets.ModelViewSet): 
-    """ Viewset fo the Comment instances. 
+# comment 
+class CommentView(APIView): 
+    """ Actions on one Comment instance. 
     """ 
-    queryset = Comment.objects.all().order_by('-issue') 
     permission_classes = [IsAuthenticated] 
-    serializer_class = CommentSerializer 
+    # serializer_class = CommentSerializer 
 
-    def create(self, request): 
+    def get(self, request, pk): 
+        """ View one comment. 
+            All connected users are allowed to vew them. 
+        """ 
+        user = request.user 
+        comment = Comment.objects.get(uuid=pk) 
+        serializer = CommentSerializer(comment) 
+        return Response(serializer.data, status=200) 
+
+    def post(self, request): 
         """ Create a new issue. 
             Only the project's author is allowed to do this. 
         """ 
         user = request.user 
         data = request.data 
-        # Attribute the author field to the connected user 
+        issue = Issue.objects.get(id=data['issue']) 
+        # Attribute the author field to the connected user. 
         data['author'] = user.id 
-        serializer = CommentSerializer(data=data) 
-        if serializer.is_valid(): 
-            serializer.save() 
-            return Response(serializer.data, status=201) 
-        return Response(serializer.errors, status=400) 
+        # Check if the user is the issue's author. 
+        if data['author'] != issue.author: 
+             return Response('Seul l\'auteur de l\'issue peut cfréer un commentaire.', 
+                status=403) 
+        else: 
+            serializer = CommentSerializer(data=data) 
+            if serializer.is_valid(): 
+                serializer.save() 
+                return Response(serializer.data, status=201) 
+            return Response(serializer.errors, status=400) 
 
-    def update(self, request, pk): 
+    def put(self, request, pk): 
         """ Updates a Comment instance. 
             Only the comment's author is allowed to do that. 
         """ 
@@ -186,7 +208,7 @@ class CommentsViewset(viewsets.ModelViewSet):
                 return Response(serializer.data, status=201) 
             return Response(serializer.errors, status=400) 
 
-    def destroy(self, request, pk): 
+    def delete(self, request, pk): 
         """ Deletes a comment. 
             Only the author of the comment is allowed to do that. 
         """ 
@@ -201,6 +223,17 @@ class CommentsViewset(viewsets.ModelViewSet):
             return Response(status=204) 
 
 
+class CommentListView(APIView): 
+    """ Viewset of the Comment instances. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request): 
+        comments = Comment.objects.all().order_by('-issue') 
+        serializer = CommentSerializer(comments, many=True) 
+        return Response(serializer.data, status=200) 
+
+
 class CommentsIssueListView(APIView): 
     """ View all comments of an issue 
     """ 
@@ -210,6 +243,7 @@ class CommentsIssueListView(APIView):
         comments = Comment.objects.filter(issue=issue_id) 
         serializer = CommentSerializer(comments, many=True) 
         return Response(serializer.data, status=200) 
+
 
 class CommentsUserListView(APIView): 
     """ Displays a list of the comments of the connected user. 
