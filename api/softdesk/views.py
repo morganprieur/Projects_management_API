@@ -40,7 +40,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=400) 
 
 
-class ProjectsListView(APIView): 
+class IssuesProjectListView(APIView): 
     """ Displays a list of the issues of a given project. 
         Everyone authenticated is allowed to see a project's issues. 
     """ 
@@ -127,6 +127,18 @@ class IssueView(APIView):
             issue.delete() 
             return Response(status=204) 
 
+
+class IssuesUserListView(APIView): 
+    """ Displays a list of the issues of the connected user. 
+        Only the user is allowed to see all his/her issues in one time. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request): 
+        user = User.objects.get(id=request.user.id) 
+        issues = Issue.objects.filter(author=user) 
+        serializer = IssueSerializer(issues, many=True) 
+        return Response(serializer.data, status=200) 
 
 
 

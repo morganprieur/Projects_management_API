@@ -52,8 +52,9 @@ urlpatterns = [
     path('user_contributions/', users_views.ContributionsListView.as_view()), 
 
     # softdesk app 
-    path('project/<project_id>/', softdesk_views.ProjectsListView.as_view()), 
     path('issue/<pk>/', softdesk_views.IssueView.as_view()), 
+    path('project_issues/<project_id>/', softdesk_views.IssuesProjectListView.as_view()), 
+    path('user_issues/', softdesk_views.IssuesUserListView.as_view()), 
 
     # admin routes 
     path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
