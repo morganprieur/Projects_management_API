@@ -10,7 +10,7 @@ from rest_framework import generics, viewsets
 from rest_framework.parsers import JSONParser 
 from rest_framework.permissions import IsAuthenticated 
 from rest_framework.response import Response 
-# from rest_framework.views import APIView 
+from rest_framework.views import APIView 
 
 # from django.db.models import Q 
 
@@ -38,6 +38,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=201) 
         return Response(serializer.errors, status=400) 
 
+
+class ProjectsListView(APIView): 
+    """ Displays a list of the issues of a given project. 
+        Everyone authenticated is allowed to see a project's issues. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request, project_id): 
+        issues = Issue.objects.filter(project=project_id) 
+        serializer = IssueSerializer(issues, many=True) 
+        return Response(serializer.data, status=200) 
 
 
 class IssueViewSet(viewsets.ModelViewSet): 
