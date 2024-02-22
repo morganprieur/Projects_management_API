@@ -38,6 +38,7 @@ router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles'
 # softdesk_views 
 router.register(r"projects", softdesk_views.ProjectsViewSet, basename='projects') 
 router.register(r"issues", softdesk_views.IssuesViewSet, basename='issues') 
+router.register(r"comments", softdesk_views.CommentsViewset, basename='comments') 
 
 urlpatterns = [ 
     # api 
@@ -55,6 +56,8 @@ urlpatterns = [
     path('issue/<pk>/', softdesk_views.IssueView.as_view()), 
     path('project_issues/<project_id>/', softdesk_views.IssuesProjectListView.as_view()), 
     path('user_issues/', softdesk_views.IssuesUserListView.as_view()), 
+    path('issue_comments/<issue_id>/', softdesk_views.CommentsIssueListView.as_view()), 
+    path('user_comments/', softdesk_views.CommentsUserListView.as_view()), 
 
     # admin routes 
     path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 

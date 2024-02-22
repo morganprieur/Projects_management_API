@@ -40,7 +40,6 @@ class Issue(models.Model):
         blank=True, 
         null=True, 
     ) 
-    bar = models.IntegerField(blank=True, default=42)
     priority = models.CharField( 
         max_length=8, 
         choices=ISSUE_PRIORITY, 

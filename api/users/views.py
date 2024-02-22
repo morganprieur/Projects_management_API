@@ -189,11 +189,12 @@ class ContributorViewSet(viewsets.ModelViewSet):
         connected_user = User.objects.get(username=request.user) 
         contributor = Contributor.objects.get(pk=pk) 
         project = Project.objects.get(pk=contributor.project.id) 
-        serializer = ContributorSerializer(contributor)
+        # print('user : ', connected_user, ' project.author : ', project.author) 
+        serializer = ContributorSerializer(contributor) 
         if connected_user != project.author: 
             # print('project author : ', project.author, 'user id : ', connected_user.id) 
             return Response( 
-                'Seul l\'auteur du projet peut le supprimer.', 
+                'Seul l\'auteur du projet peut supprimer un contributeur.', 
                 status=403) 
         else: 
             serializer.delete() 

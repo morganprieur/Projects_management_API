@@ -3,7 +3,7 @@ from django.shortcuts import render
 from softdesk.models import Comment, Issue, Project 
 from users.models import Contributor 
 from softdesk.serializers import ( 
-    IssueSerializer, ProjectSerializer) 
+    CommentSerializer, IssueSerializer, ProjectSerializer) 
 from users.serializers import UserSerializer 
 
 from rest_framework import generics, viewsets 
@@ -141,4 +141,86 @@ class IssuesUserListView(APIView):
         return Response(serializer.data, status=200) 
 
 
+class CommentsViewset(viewsets.ModelViewSet): 
+    """ Viewset fo the Comment instances. 
+    """ 
+    queryset = Comment.objects.all().order_by('-issue') 
+    permission_classes = [IsAuthenticated] 
+    serializer_class = CommentSerializer 
+
+    def create(self, request): 
+        """ Create a new issue. 
+            Only the project's author is allowed to do this. 
+        """ 
+        user = request.user 
+        data = request.data 
+        # Attribute the author field to the connected user 
+        data['author'] = user.id 
+        serializer = CommentSerializer(data=data) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=201) 
+        return Response(serializer.errors, status=400) 
+
+    def update(self, request, pk): 
+        """ Updates a Comment instance. 
+            Only the comment's author is allowed to do that. 
+        """ 
+        user = request.user 
+        data = request.data 
+        # Attribute the 'author' field to the connected user.  
+        data['author'] = user.id 
+        # Check if the connected user is the issue's author. 
+        comment = Comment.objects.get(uuid=pk) 
+        # Prevent to change the issue 
+        if data['issue'] != comment.issue.id: 
+            return Response('Vous ne pouvez pas modifier l\'issue liée au commentaire.', 
+                status=403) 
+        if user != comment.author: 
+            return Response('Seul l\'auteur du commentaire peut le modifier.', 
+                status=403) 
+        else: 
+            serializer = CommentSerializer(data=data, partial=True) 
+            if serializer.is_valid(): 
+                serializer.save() 
+                return Response(serializer.data, status=201) 
+            return Response(serializer.errors, status=400) 
+
+    def destroy(self, request, pk): 
+        """ Deletes a comment. 
+            Only the author of the comment is allowed to do that. 
+        """ 
+        user = request.user 
+        comment = Comment.objects.get(uuid=pk) 
+        # Check if the user is the comment's author. 
+        if user != comment.author: 
+            return Response('Seul l\'auteur d\'un commentaire peut le supprimer.', 
+                status=403) 
+        else: 
+            comment.delete() 
+            return Response(status=204) 
+
+
+class CommentsIssueListView(APIView): 
+    """ View all comments of an issue 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request, issue_id): 
+        comments = Comment.objects.filter(issue=issue_id) 
+        serializer = CommentSerializer(comments, many=True) 
+        return Response(serializer.data, status=200) 
+
+class CommentsUserListView(APIView): 
+    """ Displays a list of the comments of the connected user. 
+        Only the user is allowed to see all his/her comments in one time. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request): 
+        user = request.user 
+        # user = User.objects.get(id=request.user.id) 
+        comments = Comment.objects.filter(author=user) 
+        serializer = CommentSerializer(comments, many=True) 
+        return Response(serializer.data, status=200) 
 
