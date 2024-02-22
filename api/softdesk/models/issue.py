@@ -6,7 +6,7 @@ from softdesk.models import Project
 
 ISSUE_STATUS = ( 
     ("TODO", "TO DO"), 
-    ("IP", "IN PROGRESS"), 
+    ("WIP", "IN PROGRESS"), 
     ("FINISHED", "FINISHED"), 
 ) 
 ISSUE_PRIORITY = ( 
@@ -34,14 +34,19 @@ class Issue(models.Model):
         related_name='issue_project' 
     ) 
     status = models.CharField( 
-        max_length=6, 
-        choices=ISSUE_PRIORITY, 
-        default=ISSUE_PRIORITY[0] 
+        max_length=11, 
+        choices=ISSUE_STATUS, 
+        default=ISSUE_STATUS[0][0], 
+        blank=True, 
+        null=True, 
     ) 
+    bar = models.IntegerField(blank=True, default=42)
     priority = models.CharField( 
         max_length=8, 
-        choices=ISSUE_STATUS, 
-        default=ISSUE_STATUS[0] 
+        choices=ISSUE_PRIORITY, 
+        default=ISSUE_PRIORITY[0][0], 
+        blank=True, 
+        null=True, 
     ) 
     tag = models.CharField( 
         max_length=7, 
