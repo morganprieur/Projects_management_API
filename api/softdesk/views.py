@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User 
 from django.shortcuts import render 
 from softdesk.models import Comment, Issue, Project 
+from users.models import Contributor 
 from softdesk.serializers import ( 
     IssueSerializer, ProjectSerializer) 
 from users.serializers import UserSerializer 
@@ -15,7 +16,7 @@ from rest_framework.views import APIView
 # from django.db.models import Q 
 
 
-class ProjectViewSet(viewsets.ModelViewSet): 
+class ProjectsViewSet(viewsets.ModelViewSet): 
     """ Viewset of the Project instances. """ 
     queryset = Project.objects.all() 
     serializer_class = ProjectSerializer 
@@ -51,7 +52,7 @@ class ProjectsListView(APIView):
         return Response(serializer.data, status=200) 
 
 
-class IssueViewSet(viewsets.ModelViewSet): 
+class IssuesViewSet(viewsets.ModelViewSet): 
     """ Viewset of the Issue instances. 
         Only the project's author is allowed to create an issue. 
         Only the issue's author is allowed to update it. 
@@ -67,14 +68,9 @@ class IssueViewSet(viewsets.ModelViewSet):
             Only the project author is allowed to create an issue. 
         """ 
         user = User.objects.get(username=request.user) 
-        print(user) 
         data = request.data 
-        print(data) 
         project = Project.objects.get(id=data['project']) 
-        print(project) 
-        print(project.author) 
         if user != project.author: 
-            print('user : ', user, ' project.;author : ', author) 
             return Response( 
                 'Seul l\'auteur du projet peut créer un ticket.', 
                 status=403) 
@@ -86,6 +82,50 @@ class IssueViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data, status=201) 
             return Response(serializer.errors, status=400) 
 
+
+class IssueView(APIView): 
+    """ Update and delte an Issue instance. 
+    """ 
+    def put(self, request, pk): 
+        """ Updates an Issue instance. 
+            Only the Issue's author is allowed to do that. 
+            He can attribute the issue to another of the issue's 
+            contributors. 
+        """ 
+        user = request.user 
+        data = request.data 
+        print(data) 
+        # Check if the connected user is the issue's author 
+        issue = Issue.objects.get(id=pk) 
+        if user != issue.author: 
+            return Response('Seul l\'auteur de l\'issue peut la modifier.', 
+                status=403) 
+        else: 
+            # Check if the data['author'] is in the projrct.contributors 
+            project = Project.objects.get(id=issue.project.id) 
+            contributors = Contributor.objects.filter(project=project.id) 
+            contribs_ids = [contrib.user.id for contrib in contributors] 
+            if data['author'] not in contribs_ids: 
+                return Response('Le nouvel auteur doit être déjà contributeur du projet.', 
+                status=403) 
+            serializer = IssueSerializer(issue, data=data, partial=True) 
+            if serializer.is_valid(): 
+                serializer.save() 
+                return Response(serializer.data, status=201) 
+
+    def delete(self, request, pk): 
+        """ Deletes an Issue instance. 
+            Only the Issue's author is allowed to do that. 
+        """ 
+        user = User.objects.get(username=request.user) 
+        # check if the user is the issue's author 
+        issue = Issue.objects.get(id=pk) 
+        if user != issue.author: 
+            return Response('Seul l\'auteur de l\'issue peut la supprimer.', 
+                status=403) 
+        else: 
+            issue.delete() 
+            return Response(status=204) 
 
 
 

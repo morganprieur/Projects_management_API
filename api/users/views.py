@@ -103,8 +103,7 @@ class UserProfileView(APIView):
         user = request.user 
         profile = UserProfile.objects.get(user__username=user.username) 
         profile.delete() 
-        return Response(status=200) 
-
+        return Response(status=204) 
 
 
 class DeleteUserView(DestroyAPIView): 

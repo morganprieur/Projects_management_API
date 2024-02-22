@@ -36,8 +36,8 @@ router.register(r"users", users_views.UserViewSet, basename='users')
 router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
 router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 # softdesk_views 
-router.register(r"projects", softdesk_views.ProjectViewSet, basename='projects') 
-router.register(r"issues", softdesk_views.IssueViewSet, basename='issues') 
+router.register(r"projects", softdesk_views.ProjectsViewSet, basename='projects') 
+router.register(r"issues", softdesk_views.IssuesViewSet, basename='issues') 
 
 urlpatterns = [ 
     # api 
@@ -53,6 +53,7 @@ urlpatterns = [
 
     # softdesk app 
     path('project/<project_id>/', softdesk_views.ProjectsListView.as_view()), 
+    path('issue/<pk>/', softdesk_views.IssueView.as_view()), 
 
     # admin routes 
     path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
