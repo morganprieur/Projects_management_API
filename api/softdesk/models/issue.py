@@ -36,14 +36,17 @@ class Issue(models.Model):
     status = models.CharField( 
         max_length=11, 
         choices=ISSUE_STATUS, 
-        default=ISSUE_STATUS[0], 
+        default=ISSUE_STATUS[0][0], 
         blank=True, 
         null=True, 
     ) 
+    bar = models.IntegerField(blank=True, default=42)
     priority = models.CharField( 
         max_length=8, 
         choices=ISSUE_PRIORITY, 
-        default=ISSUE_PRIORITY[0],  
+        default=ISSUE_PRIORITY[0][0], 
+        blank=True, 
+        null=True, 
     ) 
     tag = models.CharField( 
         max_length=7, 

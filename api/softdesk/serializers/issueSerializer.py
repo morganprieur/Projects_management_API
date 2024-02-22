@@ -33,15 +33,17 @@ ISSUE_TAG = (
 
 class IssueSerializer(serializers.ModelSerializer): 
     # status = serializers.ChoiceField( 
-        # choices=ISSUE_STATUS? 
+        # choices=ISSUE_STATUS, 
         # allow_blank=True, 
     # ) 
     status = serializers.ChoiceField( 
-        choices = ISSUE_STATUS, 
+        choices=ISSUE_STATUS, 
         required=False, 
     ) 
     priority = serializers.ChoiceField( 
-        choices = ISSUE_PRIORITY) 
+        choices = ISSUE_PRIORITY, 
+        required=False, 
+    ) 
     tag = serializers.ChoiceField( 
         choices = ISSUE_TAG) 
     class Meta: 
