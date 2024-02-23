@@ -78,12 +78,12 @@ class IsAdminUserTest(TestCase):
         author = User.objects.create( 
             username='author' 
         ) 
-        user_profile = UserProfile.objects.create( 
+        author_profile = UserProfile.objects.create( 
             user=author, age=18) 
         contributor = User.objects.create( 
             username='contributor' 
         ) 
-        user_profile = UserProfile.objects.create( 
+        contributor_profile = UserProfile.objects.create( 
             user=contributor, age=16) 
         project = Project.objects.create( 
             author=author, 
@@ -127,17 +127,35 @@ class IsAdminUserTest(TestCase):
         self.assertTrue(permission) 
 
 
-    # def testOnlyAuthorCanDeleteContributor(self): 
-    #     user = User.objects.get(username='user') 
-    #     author = User.objects.get(username='author') 
-    #     contributor = User.objects.get(username='contributor') 
-    #     self.assertEquals(user.id, 2) 
-    #     self.assertEquals(author.id, 3) 
-    #     self.assertEquals(contributor.id, 4) 
+    def testOnlyAuthorCanDeleteContributor(self): 
+        user = User.objects.get(username='user') 
+        author = User.objects.get(username='author') 
+        contributor = User.objects.get(username='contributor') 
+        projects = Project.objects.all() 
+        print(projects) 
+        project = Project.objects.get(id=2) 
+        print(project) 
+        contrib = Contributor.objects.get(user=user) 
+        self.assertEquals(contrib.id, 3) 
+        self.assertEquals(user.id, 2) 
+        self.assertEquals(author.id, 3) 
+        self.assertEquals(contributor.id, 4) 
+        self.assertEquals(project.id, 2) 
+        self.assertEquals(project.author.id, 3) 
 
-    #     factory = RequestFactory() 
-    #     request = factory.delete('contributors/1/') 
-    #     request.user = contributor 
+        factory = RequestFactory() 
+        request = factory.delete('contributors/3/') 
+        request.user = user 
+        self.assertTrue(request)  # fail --> trouver comment tester ça 
+            # la requête doit rentrer dans ContributorViewSet.destroy() 
+            # et on doit tester le status http de la Response 
 
-    #     self.assertFalse(request)  # fail --> trouver comment tester ça 
+        # c = User() 
+        # response = c.get('/contributors/') 
+        # self.assertEquals(response.status_code, 200) 
+        # # 200 
+        # response = c.delete('/contributors/3/')
+        # self.assertEquals(response.status_code, 403) 
+        # # response.content 
+
 

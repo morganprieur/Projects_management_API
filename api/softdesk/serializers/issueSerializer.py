@@ -16,7 +16,7 @@ class Issues(object):
 
 ISSUE_STATUS = ( 
     ("TODO", "TO DO"), 
-    ("IP", "IN PROGRESS"), 
+    ("WIP", "IN PROGRESS"), 
     ("FINISHED", "FINISHED"), 
 ) 
 ISSUE_PRIORITY = ( 
@@ -32,10 +32,6 @@ ISSUE_TAG = (
 
 
 class IssueSerializer(serializers.ModelSerializer): 
-    # status = serializers.ChoiceField( 
-        # choices=ISSUE_STATUS, 
-        # allow_blank=True, 
-    # ) 
     status = serializers.ChoiceField( 
         choices=ISSUE_STATUS, 
         required=False, 

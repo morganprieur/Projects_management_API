@@ -98,6 +98,9 @@ ou lancer le container en décommentant la ligne "command" :
 `api/users/tests.py`    
 
 *  Lancer les tests :     
+`pipenv install` 
+`pipenv shell` 
+`cd api/` 
 `python manage.py test users.tests -v 3` 
 Régler la quantité de détails avec `-v` : `3` = le maximum    
 
