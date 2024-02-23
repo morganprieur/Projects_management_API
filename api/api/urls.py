@@ -33,19 +33,24 @@ from softdesk import views as softdesk_views
 router = routers.DefaultRouter() 
 # users_views 
 router.register(r"users", users_views.UserViewSet, basename='users') 
-router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
-router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
+# router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
+# router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 
 urlpatterns = [ 
     # api 
     path('api-auth/', include('rest_framework.urls')), 
+    path('', include(router.urls)), 
 
     # users app 
-    path('', include(router.urls)), 
+    # user 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     path('profile/', users_views.UserProfileView.as_view(), name='profile'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
-    path('project_contributors/<project_id>/', users_views.ContributorsListView.as_view()), 
+    # contributor 
+    path('contributor/', users_views.ContributorView.as_view()), 
+    path('contributor/<pk>/', users_views.ContributorView.as_view()), 
+    path('contributors/', users_views.ContributorsListView.as_view()), 
+    path('project_contributors/<project_id>/', users_views.ProjectContributorsListView.as_view()), 
     path('user_projects/', users_views.ContributionsListView.as_view()), 
 
     # softdesk app 
@@ -68,6 +73,8 @@ urlpatterns = [
 
     # admin routes 
     path('delete_user/<pk>/', users_views.DeleteUserView.as_view(), name='delete_profile'), 
+    # Admin interface access 
+    path('admin/', admin.site.urls), 
 
     # JWT login 
     path('jwt/get_token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), 
@@ -78,6 +85,5 @@ urlpatterns = [
     # Doc: UI: 
     path('api/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'), 
-    # Admin interface access 
-    path('admin/', admin.site.urls), 
+
 ] 
