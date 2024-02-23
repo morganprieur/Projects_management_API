@@ -22,6 +22,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required 
 
 
+# user 
 class UserViewSet(viewsets.ModelViewSet): 
     """
         API endpoint that allows users to be created, viewed or edited. 
@@ -53,19 +54,11 @@ class SignupView(CreateAPIView):
         return Response(serializer.errors, status=400) 
 
 
-class UserProfileViewSet(viewsets.ModelViewSet): 
-    """ The UserProfile's views of the connected User. """ 
-    queryset = UserProfile.objects.all() 
-    serializer_class = UserPofileSerializer 
-    permission_classes = [IsAuthenticated, IsAdminAuthenticated] 
-    model = UserProfile 
-
-
+# user profile 
 class UserProfileView(APIView): 
     """ The UserProfile's views of the connected User. """ 
     serializer_class = UserPofileSerializer 
     permission_classes = [IsAuthenticated] 
-    model = UserProfile 
 
     def get(self, request): 
         """ Get the connected user's profile. 
@@ -81,13 +74,12 @@ class UserProfileView(APIView):
             Only the connected user himself can do this 
         """ 
         data = JSONParser().parse(request) 
-        profile = UserProfile.objects.get(user__username=request.user.username) 
+        profile = UserProfile.objects.get(user=request.user) 
         # Check if the updated age is greater than 15: 
         if data['age'] < 15:
             return Response( 
                 'Vous devez être âgé d\'au moins 15 ans.', 
-                status=400) 
-
+                status=403) 
         serializer = UserPofileSerializer(profile, data=data, partial=True) 
         if serializer.is_valid(): 
             serializer.save() 
@@ -95,13 +87,13 @@ class UserProfileView(APIView):
         return Response(serializer.errors, status=400) 
 
     def delete(self, request): 
-        """ Deletes the connected user's profile. 
+        """ Deletes the authenticated user's profile. 
             A Signal will delete the User instance after the UserProfile will 
             be deleted. 
             Only the connected user himself can do this 
         """ 
         user = request.user 
-        profile = UserProfile.objects.get(user__username=user.username) 
+        profile = UserProfile.objects.get(user=user) 
         profile.delete() 
         return Response(status=204) 
 
@@ -126,41 +118,30 @@ class LogoutView(APIView):
         return Response({'message': "Logout successful"}) 
 
 
-class ContributorViewSet(viewsets.ModelViewSet): 
-    """ Viewset of the Users who contribute to Projects. 
-        Only a superuser is allowed to views all the contributor's records. 
-        All the users are allowed to view the contributors to a given project. 
+# contributor 
+class ContributorView(APIView): 
+    """ Actions on the Users who contribute to Projects. 
+        All the authenticated users are allowed to view the 
+        contributors to a given project. 
         Only the author of a Project is allowed to add or delete another 
-        Contributor to this project. 
-        A user-project" binome must be unique. 
+        contributor of this project. 
+        A user-project binome must be unique. 
+        No reason to view or modify a Contributor instance. 
     """ 
     serializer_class = ContributorSerializer 
     permission_classes = [IsAuthenticated] 
-    queryset = Contributor.objects.all() 
 
-    def list(self, request): 
-        """ Get all the contributors and projects. 
-            Only a superuser is allowed to view this. 
-        """ 
-        connected_user = request.user 
-        if not connected_user.is_superuser: 
-            return Response( 
-                'Seul un superutilisateur peut voir tous les contributeurs. \
-                Pour voir les contributeurs d\'un projet, ajoutez son ID à la fin de l\'URI', 
-                status=403) 
-
-
-    def create(self, request): 
-        """ Create a user-project binome. Before that : 
+    def post(self, request): 
+        """ Create a user-project binome. 
+            Before that : 
             - check if the connected user is the author of the project, 
             - check if the user-project binome does not already exist. 
         """  
         data = request.data 
         # Check if the connected user is the author of the project: 
-        connected_user = User.objects.get(username=request.user) 
+        user = request.user 
         project = Project.objects.get(pk=data['project']) 
-        if connected_user != project.author: 
-            print('project id : ', project.id, 'user id : ', connected_user.id) 
+        if user != project.author: 
             return Response( 
                 'Seul l\'auteur du projet peut ajouter un contributeur.', 
                 status=403) 
@@ -180,37 +161,54 @@ class ContributorViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=200) 
         return Response(serializer.errors, status=400) 
 
-
-    def destroy(self, request, pk): 
+    def delete(self, request, pk): 
         """ Delete a user-project binome. 
             Only the author of the project can do this. 
         """ 
         # Check if the connected user is the author of the project: 
-        connected_user = User.objects.get(username=request.user) 
-        contributor = Contributor.objects.get(pk=pk) 
-        project = Project.objects.get(pk=contributor.project.id) 
-        # print('user : ', connected_user, ' project.author : ', project.author) 
-        serializer = ContributorSerializer(contributor) 
-        if connected_user != project.author: 
-            # print('project author : ', project.author, 'user id : ', connected_user.id) 
+        user = request.user 
+        contributor = Contributor.objects.get(id=pk) 
+        project = Project.objects.get(id=contributor.project.id) 
+        # Check if the user is the project's author. 
+        if user != project.author: 
             return Response( 
                 'Seul l\'auteur du projet peut supprimer un contributeur.', 
                 status=403) 
         else: 
-            serializer.delete() 
-            return Response(serializer.data, status=204) 
+            contributor.delete() 
+            return Response(status=204) 
 
 
 class ContributorsListView(APIView): 
-    """ Displays a list of the contributors of a given project. 
+    """ View of all the contributor-project binomes. 
+        Only superusers are allowed to view them. 
+    """ 
+    permission_classes = [IsAdminAuthenticated] 
+
+    def get(self, request): 
+        user = request.user 
+        if not user.is_superuser: 
+            return Response( 
+                '''Seul un superutilisateur peut voir tous les contributeurs. 
+                Pour voir les contributeurs d\'un projet, ajoutez son ID à la fin de l\'URI''', 
+                status=403) 
+        else: 
+            contributors = Contributor.objects.all() 
+            serializer = ContributorSerializer(contributors, many=True) 
+            return Response(serializer.data, status=200) 
+
+
+class ProjectContributorsListView(APIView): 
+    """ Displays a list of all the contributors of a given project. 
         Everyone authenticated is allowed to see a project's contributors. 
     """ 
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated, IsAdminAuthenticated] 
 
     def get(self, request, project_id): 
         contributors = Contributor.objects.filter(project=project_id) 
         serializer = ContributorSerializer(contributors, many=True) 
         return Response(serializer.data, status=200) 
+
 
 class ContributionsListView(APIView): 
     """ Displays a list of the contributions of a user. 
