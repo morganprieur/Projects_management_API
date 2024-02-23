@@ -26,12 +26,6 @@ def create_contributor(sender, instance, created, **kwargs):
         )  
         new_contrib.save() 
 
-        # # DEBUG Get the latest instance of created Contrib: 
-        # contrib = Contributor.objects.last() 
-        # print(f'''Last contrib : 
-        #     {str(contrib.user.username)} - {str(contrib.project)} 
-        # ''') 
-
 
 @receiver(post_delete, sender=UserProfile) 
 def delete_profile(sender, instance, **kwargs):  # using, 
