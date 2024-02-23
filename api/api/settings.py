@@ -86,7 +86,6 @@ DATABASES = {
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': '127.0.0.1',   # nom du service 
-        # 'HOST': 'db_softdesk',   # nom du service 
         'PORT': 5432, 
     }
 }
