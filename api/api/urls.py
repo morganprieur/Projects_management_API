@@ -35,10 +35,6 @@ router = routers.DefaultRouter()
 router.register(r"users", users_views.UserViewSet, basename='users') 
 router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
 router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
-# softdesk_views 
-# router.register(r"projects", softdesk_views.ProjectsViewSet, basename='projects') 
-# router.register(r"issues", softdesk_views.IssuesViewSet, basename='issues') 
-# router.register(r"comments", softdesk_views.CommentsViewset, basename='comments') 
 
 urlpatterns = [ 
     # api 
@@ -50,11 +46,11 @@ urlpatterns = [
     path('profile/', users_views.UserProfileView.as_view(), name='profile'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
     path('project_contributors/<project_id>/', users_views.ContributorsListView.as_view()), 
-    path('user_contributions/', users_views.ContributionsListView.as_view()), 
+    path('user_projects/', users_views.ContributionsListView.as_view()), 
 
     # softdesk app 
     # project 
-    # path('projects/', softdesk_views.ProjectsListView.as_view()), 
+    path('projects/', softdesk_views.ProjectsListView.as_view()), 
     path('project/', softdesk_views.ProjectView.as_view()), 
     path('project/<pk>/', softdesk_views.ProjectView.as_view()), 
     # issue 

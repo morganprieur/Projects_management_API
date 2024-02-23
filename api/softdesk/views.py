@@ -29,9 +29,9 @@ class ProjectView(APIView):
             A Signal will create the Contributor instance after 
             the Project instance is created. 
         """ 
-        print(request.data) 
+        permission_classes = [IsAuthenticated] 
+        print(request.user) 
         user = request.user 
-        user = User.objects.get(username=user) 
         data = request.data 
         data['author'] = user.pk 
         serializer = ProjectSerializer(data=data) 
@@ -39,6 +39,65 @@ class ProjectView(APIView):
             serializer.save() 
             return Response(serializer.data, status=201) 
         return Response(serializer.errors, status=400) 
+
+    def get(self, request, pk): 
+        """ View of a Project instance. 
+            Only a connected user can do this. 
+        """ 
+        user = request.user 
+        project = Project.objects.get(id=pk) 
+        serializer = ProjectSerializer(project) 
+        return Response(serializer.data, status=200) 
+
+    def put(self, request, pk): 
+        """ Updates a Project instance. 
+            Only the project's author can do this. 
+        """ 
+        user = request.user 
+        data = request.data 
+        project = Project.objects.get(id=pk) 
+        # Check if the user is the project's author. 
+        if user != project.author: 
+            return Response('Seul l\'auteur du projet a le droit de le modifier.', 
+            status=403) 
+        # Prevent to modify the name of the project. 
+        if data['name'] != project.name: 
+            return Response('Le nom du projet ne peut pas être changé.', 
+            status=403) 
+        else: 
+            data['author'] = user.id 
+            data['project'] = project.id 
+            serializer = ProjectSerializer(data=data, partial=True) 
+            if serializer.is_valid(): 
+                serializer.save() 
+                return Response(serializer.data, status=201)     
+            return Response(serializer.errors, status=400)     
+
+    def delete(self, request, pk): 
+        """ Deletes a project instance. 
+            Only the project's author is allowed to do that. 
+        """ 
+        user = request.user 
+        # check if the user is the project's author 
+        project = Project.objects.get(id=pk) 
+        if user != project.author: 
+            return Response('Seul l\'auteur du projet peut le supprimer.', 
+                status=403) 
+        else: 
+            project.delete() 
+            return Response(status=204) 
+
+
+class ProjectsListView(APIView): 
+    """ Displays a list of all the projects. 
+        Everyone authenticated is allowed to see the projects. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+
+    def get(self, request): 
+        projects = Project.objects.all() 
+        serializer = ProjectSerializer(projects, many=True) 
+        return Response(serializer.data, status=200) 
 
 
 # issue 
