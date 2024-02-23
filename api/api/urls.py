@@ -33,8 +33,6 @@ from softdesk import views as softdesk_views
 router = routers.DefaultRouter() 
 # users_views 
 router.register(r"users", users_views.UserViewSet, basename='users') 
-# router.register(r"contributors", users_views.ContributorViewSet, basename='contributors') 
-# router.register(r"profiles", users_views.UserProfileViewSet, basename='profiles') 
 
 urlpatterns = [ 
     # api 
