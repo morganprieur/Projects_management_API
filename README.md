@@ -7,92 +7,34 @@ Développement selon les princpes "green code" de l'INR, et respect de certaines
 
 ## Installation 
 
-1. **Environnement virtuel (Pipenv)** 
-11. Initialiser l'env. virtuel : `pipenv install` 
-12. Activer l'env. virtuel : `pipenv shell` (le nom du terminal devient "pipenv") 
-13. Pour arrêter l'env. virtuel : `exit` 
+1. **Variables d'environnement du projet** 
 
-2. **Installer Django et DRF** 
-`pip install django psycopg2 djangorestframework` 
-psycopg2 est indispensable avec PostgreSQL 
-
-3. **Requirements.txt** 
-Mettre à jour les requirements :`pip freeze > softdesk/requirements.txt` 
+Vérifier que le fichier .env est présent et contient les variables utiles pour le projet (la clé dde sécurité de Django, les informations de connexion à la BDD) 
 
 
-4. Création du projet Django 
+2. **Environnement virtuel (Pipenv)** 
+(Doc)[https://pypi.org/project/pipenv/] 
 
-41. **Utilisation de Docker** 
-411. Builder le container : 
-412. Dans compose.yaml, commenter la ligne "command..." 
-413. Lancer la commande :    
-`[sudo]* docker compose run <web>* django-admin startproject <nom_projet>* .` 
-pour installer le projet Django. 
-*: 
-sudo : selon votre configuration 
-web : le nom du dossier contenant le Dockerfile 
-nom_projet : le nom du projet à créer 
-. : le dossier courant 
-
-42. **Sans Docker** 
-Lancer la commande :    
-`django-admin startproject <nom_projet>* .` 
-*nom_projet: le nom du projet à créer 
+21. Initialiser l'env. virtuel : `pipenv install` 
+    Installation des dépendances 
+22. Activer l'env. virtuel : `pipenv shell` 
+    --> le nom du terminal devient "pipenv" 
+23. Pour arrêter l'env. virtuel : `exit` 
 
 
-5. **Etapes BDD Django** 
-Changer les données dans DATABASES du fichier settings.py en remplaçant les données Sqlite3 par celles-ci :    
-```python 
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': os.environ.get('POSTGRES_DB'),   # nom de la bdd 
-    'USER': os.environ.get('POSTGRES_USER'),
-    'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-    'HOST': '<db>',   # nom du service 
-    'PORT': 5432, 
-``` 
+3. **Lancer le serveur Django** 
+
+31. `pipenv run python <chemin/vers>/manage.py runserver` 
+32. Pour arrêter le serveur : `Ctrl+c` 
 
 
-6. **Etape Application de Django** 
-61. Installer une application Django :    
-`cd <projet>` 
-`python manage.py startapp <nom_de_la_application>` 
-62. Ajouter l'application dans le fichier settings.py['INSTALLED_APPS'] 
-
-7. **Lancer le container Docker** 
-71. Ajouter la ligne :    
-`command: bash -c "pwd && python manage.py runserver 0.0.0.0:${API_PORT}"` 
-au fichier compose.yaml 
-72. Rebuilder et lancer le container et le serveur django :    
-`docker compose up --build --remove-orphans` 
-
-8. **Vérifer que tout fonctionne** 
-Ouvrir le navigateur à l'adresse `localhost:9000` 
-
-**Pour l'instant les migrations ne sont pas faites** 
-On les fera après avoir implémenté les modèles. 
-
-
-
-================ 
-
-
-4. Implémenter les modèles 
-5. préparer et faire les migrations :    
-`python manage.py makemigrations`
-`python manage.py migrate` 
-ou les lancer depuis le fichier softdesk/commands.migrate_pipenv 
-ou lancer le container en décommentant la ligne "command" :    
-`docker composer up --build --remove_orphans` 
-
-================ 
-
-## Créer un groupe 
-(Leçon OCR)[https://openclassrooms.com/fr/courses/7192426-allez-plus-loin-avec-le-framework-django/7388713-attribuez-des-permissions-en-utilisant-les-groupes]
-
-
+4. Visiter l'adresse `http://127.0.0.1:8000/` dans un navigateur pour vérifier le projet fonctionne. 
+Cette adresse est la racine du projet d'API, dans un navigateur ou via Postman. 
 
 
 ## Tests 
+
+Seulement les tests pour vérifier la création d'enregistrements par les signaux. 
 
 *  Emplacement du fichier de test :    
 `api/users/tests.py`    
@@ -102,7 +44,7 @@ ou lancer le container en décommentant la ligne "command" :
 `pipenv shell` 
 `cd api/` 
 `python manage.py test users.tests -v 3` 
-Régler la quantité de détails avec `-v` : `3` = le maximum    
+Régler le degré de détails avec `-v` : `3` = le maximum    
 
 
 
