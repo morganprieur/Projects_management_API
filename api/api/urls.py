@@ -43,6 +43,7 @@ urlpatterns = [
     # user 
     path('signup/', users_views.SignupView.as_view(), name='signup'), 
     path('profile/', users_views.UserProfileView.as_view(), name='profile'), 
+    path('profiles/', users_views.UserProfilesListView.as_view(), name='profiles'), 
     path('logout/', users_views.LogoutView.as_view(), name='logout'), 
     # contributor 
     path('contributor/', users_views.ContributorView.as_view()), 

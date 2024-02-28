@@ -46,7 +46,10 @@ class SignupView(CreateAPIView):
                     201 if the instance/s has/have been created, 
                     400 with the error if the request has not been completely executed. 
         """ 
-        data = JSONParser().parse(request) 
+        data = request.data 
+        # print(data) 
+        if data['age'] < 15: 
+            return Response('Vous devez être âgé d\'au moins 15 ans.', status=403) 
         serializer = UserPofileSerializer(data=data) 
         if serializer.is_valid(): 
             serializer.save() 
@@ -73,7 +76,7 @@ class UserProfileView(APIView):
         """ Update the connected user's profile. 
             Only the connected user himself can do this 
         """ 
-        data = JSONParser().parse(request) 
+        data = request.data 
         profile = UserProfile.objects.get(user=request.user) 
         # Check if the updated age is greater than 15: 
         if data['age'] < 15:
@@ -96,6 +99,18 @@ class UserProfileView(APIView):
         profile = UserProfile.objects.get(user=user) 
         profile.delete() 
         return Response(status=204) 
+
+
+class UserProfilesListView(APIView): 
+    """ View of all the profiles. 
+        Only superusers are allowed to view them. 
+    """ 
+    permission_classes = [IsAdminAuthenticated] 
+
+    def get(self, request): 
+        profiles = UserProfile.objects.all() 
+        serializer = UserPofileSerializer(profiles, many=True) 
+        return Response(serializer.data, status=200) 
 
 
 class DeleteUserView(DestroyAPIView): 
