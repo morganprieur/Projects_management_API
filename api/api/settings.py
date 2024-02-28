@@ -145,17 +145,16 @@ REST_FRAMEWORK = {
     ], 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination', 
     'PAGE_SIZE': 10, 
-    # # Used for the tests : 
-    # 'DJANGO_SETTINGS_MODULE': os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dashboard.settings'), 
-   
+
     # # drf_spectacular 
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', 
 } 
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(days=3),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=10),
 } 
 
 

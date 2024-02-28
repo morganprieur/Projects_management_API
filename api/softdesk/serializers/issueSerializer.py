@@ -4,8 +4,6 @@ from softdesk.models import Issue
 from users.serializers import UserSerializer 
 # utils 
 from rest_framework import serializers 
-# import re 
-# from datetime import datetime, timedelta 
 
 
 class Issues(object): 
@@ -53,35 +51,4 @@ class IssueSerializer(serializers.ModelSerializer):
             'tag', 
             'created_time', 
         ) 
-
-    # def create(self, validated_data): 
-    #     print(validated_data) 
-    #     # if fields == None
-
-
-# ======== 
-# from rest_framework import serializers 
-  
-# class Geeks(object): 
-#     def __init__(self, choices, multiplechoices): 
-#         self.choices = choices 
-#         self.multiplechoices = multiplechoices 
-  
-# # create a tuple 
-# GEEKS_CHOICES =(  
-#     ("1", "One"),  
-#     ("2", "Two"),  
-#     ("3", "Three"),  
-#     ("4", "Four"),  
-#     ("5", "Five"),  
-# ) 
-  
-# # create a serializer 
-# class GeeksSerializer(serializers.Serializer): 
-#     # initialize fields 
-#     choices = serializers.ChoiceField( 
-#                         choices = GEEKS_CHOICES) 
-#     multiplechoices = serializers.MultipleChoiceField( 
-#                         choices = GEEKS_CHOICES) 
-# ======== 
 

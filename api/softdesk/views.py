@@ -13,15 +13,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework.views import APIView 
 
-# from django.db.models import Q 
 
-
-# class ProjectsViewSet(viewsets.ModelViewSet): 
 class ProjectView(APIView): 
     """ Actions on a Project instance. """ 
-    # queryset = Project.objects.all() 
-    # serializer_class = ProjectSerializer 
-    permission_classes = [IsAuthenticated] 
 
     def post(self, request): 
         """ Creates a new Project instance. 
@@ -30,7 +24,6 @@ class ProjectView(APIView):
             the Project instance is created. 
         """ 
         permission_classes = [IsAuthenticated] 
-        print(request.user) 
         user = request.user 
         data = request.data 
         data['author'] = user.pk 
@@ -42,7 +35,6 @@ class ProjectView(APIView):
 
     def get(self, request, pk): 
         """ View of a Project instance. 
-            Only a connected user can do this. 
         """ 
         user = request.user 
         project = Project.objects.get(id=pk) 
@@ -53,6 +45,7 @@ class ProjectView(APIView):
         """ Updates a Project instance. 
             Only the project's author can do this. 
         """ 
+        permission_classes = [IsAuthenticated] 
         user = request.user 
         data = request.data 
         project = Project.objects.get(id=pk) 
@@ -60,14 +53,11 @@ class ProjectView(APIView):
         if user != project.author: 
             return Response('Seul l\'auteur du projet a le droit de le modifier.', 
             status=403) 
-        # Prevent to modify the name of the project. 
-        if data['name'] != project.name: 
-            return Response('Le nom du projet ne peut pas être changé.', 
-            status=403) 
         else: 
             data['author'] = user.id 
-            data['project'] = project.id 
-            serializer = ProjectSerializer(data=data, partial=True) 
+            data['id'] = pk 
+            data['name'] = project.name
+            serializer = ProjectSerializer(project, data=data, partial=True) 
             if serializer.is_valid(): 
                 serializer.save() 
                 return Response(serializer.data, status=201)     
@@ -77,6 +67,7 @@ class ProjectView(APIView):
         """ Deletes a project instance. 
             Only the project's author is allowed to do that. 
         """ 
+        permission_classes = [IsAuthenticated] 
         user = request.user 
         # check if the user is the project's author 
         project = Project.objects.get(id=pk) 
@@ -92,7 +83,6 @@ class ProjectsListView(APIView):
     """ Displays a list of all the projects. 
         Everyone authenticated is allowed to see the projects. 
     """ 
-    permission_classes = [IsAuthenticated] 
 
     def get(self, request): 
         projects = Project.objects.all() 
@@ -104,13 +94,20 @@ class ProjectsListView(APIView):
 class IssueView(APIView): 
     """ Actions on an Issue instance. 
     """ 
-    permission_classes = [IsAuthenticated] 
+    def get(self, request, pk): 
+        """ View an issue. 
+        """ 
+        user = User.objects.get(username=request.user) 
+        issue = Issue.objects.get(id=pk) 
+        serializer = IssueSerializer(issue) 
+        return Response(serializer.data, status=200) 
 
     def post(self, request): 
         """ Creates a new Issue instance. 
             Only the project\'s contributors are allowed 
             to create an issue. 
         """ 
+        permission_classes = [IsAuthenticated] 
         user = User.objects.get(username=request.user) 
         data = request.data 
         # Check if the user is a contributor of the project. 
@@ -134,6 +131,7 @@ class IssueView(APIView):
             He can attribute the issue to another of the issue's 
             contributors. 
         """ 
+        permission_classes = [IsAuthenticated] 
         user = request.user 
         data = request.data 
         # Check if the connected user is the issue's author 
@@ -149,7 +147,9 @@ class IssueView(APIView):
             if data['author'] not in contribs_ids: 
                 return Response('Le nouvel auteur doit être déjà contributeur du projet.', 
                 status=403) 
-            serializer = IssueSerializer(data=data, partial=True) 
+            else: 
+                data['project'] = issue.project.id 
+            serializer = IssueSerializer(issue, data=data, partial=True) 
             if serializer.is_valid(): 
                 serializer.save() 
                 return Response(serializer.data, status=201) 
@@ -159,6 +159,7 @@ class IssueView(APIView):
         """ Deletes an Issue instance. 
             Only the Issue's author is allowed to do that. 
         """ 
+        permission_classes = [IsAuthenticated] 
         user = User.objects.get(username=request.user) 
         # check if the user is the issue's author 
         issue = Issue.objects.get(id=pk) 
@@ -233,8 +234,8 @@ class CommentView(APIView):
         # Attribute the author field to the connected user. 
         data['author'] = user.id 
         # Check if the user is the issue's author. 
-        if data['author'] != issue.author: 
-             return Response('Seul l\'auteur de l\'issue peut cfréer un commentaire.', 
+        if data['author'] != issue.author.id: 
+             return Response('Seul l\'auteur de l\'issue peut créer un commentaire.', 
                 status=403) 
         else: 
             serializer = CommentSerializer(data=data) 
@@ -261,7 +262,7 @@ class CommentView(APIView):
             return Response('Seul l\'auteur du commentaire peut le modifier.', 
                 status=403) 
         else: 
-            serializer = CommentSerializer(data=data, partial=True) 
+            serializer = CommentSerializer(comment, data=data, partial=True) 
             if serializer.is_valid(): 
                 serializer.save() 
                 return Response(serializer.data, status=201) 
