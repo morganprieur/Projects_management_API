@@ -217,7 +217,7 @@ class ProjectContributorsListView(APIView):
     """ Displays a list of all the contributors of a given project. 
         Everyone authenticated is allowed to see a project's contributors. 
     """ 
-    permission_classes = [IsAuthenticated, IsAdminAuthenticated] 
+    permission_classes = [IsAuthenticated] 
 
     def get(self, request, project_id): 
         contributors = Contributor.objects.filter(project=project_id) 
