@@ -14,8 +14,22 @@ from rest_framework.response import Response
 from rest_framework.views import APIView 
 
 
+class GetProjectView(APIView): 
+    """ Views a project. 
+        Everyone can do this. 
+    """ 
+    def get(self, request, pk): 
+        """ View of a Project instance. 
+        """ 
+        user = request.user 
+        project = Project.objects.get(id=pk) 
+        serializer = ProjectSerializer(project) 
+        return Response(serializer.data, status=200) 
+
+
 class ProjectView(APIView): 
     """ Actions on a Project instance. """ 
+    permission_classes = [IsAuthenticated] 
 
     def post(self, request): 
         """ Creates a new Project instance. 
@@ -23,7 +37,6 @@ class ProjectView(APIView):
             A Signal will create the Contributor instance after 
             the Project instance is created. 
         """ 
-        permission_classes = [IsAuthenticated] 
         user = request.user 
         data = request.data 
         data['author'] = user.pk 
@@ -33,19 +46,10 @@ class ProjectView(APIView):
             return Response(serializer.data, status=201) 
         return Response(serializer.errors, status=400) 
 
-    def get(self, request, pk): 
-        """ View of a Project instance. 
-        """ 
-        user = request.user 
-        project = Project.objects.get(id=pk) 
-        serializer = ProjectSerializer(project) 
-        return Response(serializer.data, status=200) 
-
     def put(self, request, pk): 
         """ Updates a Project instance. 
             Only the project's author can do this. 
         """ 
-        permission_classes = [IsAuthenticated] 
         user = request.user 
         data = request.data 
         project = Project.objects.get(id=pk) 
@@ -67,7 +71,6 @@ class ProjectView(APIView):
         """ Deletes a project instance. 
             Only the project's author is allowed to do that. 
         """ 
-        permission_classes = [IsAuthenticated] 
         user = request.user 
         # check if the user is the project's author 
         project = Project.objects.get(id=pk) 
@@ -91,23 +94,26 @@ class ProjectsListView(APIView):
 
 
 # issue 
-class IssueView(APIView): 
-    """ Actions on an Issue instance. 
+class GetIssueView(APIView): 
+    """ View an issue. 
     """ 
     def get(self, request, pk): 
-        """ View an issue. 
-        """ 
         user = User.objects.get(username=request.user) 
         issue = Issue.objects.get(id=pk) 
         serializer = IssueSerializer(issue) 
         return Response(serializer.data, status=200) 
 
+
+class IssueView(APIView): 
+    """ Actions on an Issue instance. 
+    """ 
+    permission_classes = [IsAuthenticated] 
+    
     def post(self, request): 
         """ Creates a new Issue instance. 
             Only the project\'s contributors are allowed 
             to create an issue. 
         """ 
-        permission_classes = [IsAuthenticated] 
         user = User.objects.get(username=request.user) 
         data = request.data 
         # Check if the user is a contributor of the project. 
@@ -131,7 +137,6 @@ class IssueView(APIView):
             He can attribute the issue to another of the issue's 
             contributors. 
         """ 
-        permission_classes = [IsAuthenticated] 
         user = request.user 
         data = request.data 
         # Check if the connected user is the issue's author 
@@ -159,7 +164,6 @@ class IssueView(APIView):
         """ Deletes an Issue instance. 
             Only the Issue's author is allowed to do that. 
         """ 
-        permission_classes = [IsAuthenticated] 
         user = User.objects.get(username=request.user) 
         # check if the user is the issue's author 
         issue = Issue.objects.get(id=pk) 
@@ -209,20 +213,21 @@ class IssuesUserListView(APIView):
 
 
 # comment 
-class CommentView(APIView): 
-    """ Actions on one Comment instance. 
+class GetCommentView(APIView): 
+    """ View one comment. 
+        Everyone is allowed to vew them. 
     """ 
-    permission_classes = [IsAuthenticated] 
-    # serializer_class = CommentSerializer 
-
     def get(self, request, pk): 
-        """ View one comment. 
-            All connected users are allowed to vew them. 
-        """ 
         user = request.user 
         comment = Comment.objects.get(uuid=pk) 
         serializer = CommentSerializer(comment) 
         return Response(serializer.data, status=200) 
+
+
+class CommentView(APIView): 
+    """ Actions on one Comment instance. 
+    """ 
+    permission_classes = [IsAuthenticated] 
 
     def post(self, request): 
         """ Create a new issue. 
@@ -250,23 +255,18 @@ class CommentView(APIView):
         """ 
         user = request.user 
         data = request.data 
-        # Attribute the 'author' field to the connected user.  
-        data['author'] = user.id 
         # Check if the connected user is the issue's author. 
         comment = Comment.objects.get(uuid=pk) 
-        # Prevent to change the issue 
-        if data['issue'] != comment.issue.id: 
-            return Response('Vous ne pouvez pas modifier l\'issue liée au commentaire.', 
-                status=403) 
         if user != comment.author: 
             return Response('Seul l\'auteur du commentaire peut le modifier.', 
                 status=403) 
-        else: 
-            serializer = CommentSerializer(comment, data=data, partial=True) 
-            if serializer.is_valid(): 
-                serializer.save() 
-                return Response(serializer.data, status=201) 
-            return Response(serializer.errors, status=400) 
+        # Prevent to change the issue 
+        data['issue'] = comment.issue.id 
+        serializer = CommentSerializer(comment, data=data, partial=True) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=201) 
+        return Response(serializer.errors, status=400) 
 
     def delete(self, request, pk): 
         """ Deletes a comment. 
