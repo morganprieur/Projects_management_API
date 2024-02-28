@@ -55,16 +55,19 @@ urlpatterns = [
     # softdesk app 
     # project 
     path('projects/', softdesk_views.ProjectsListView.as_view()), 
+    path('view_project/<pk>/', softdesk_views.GetProjectView.as_view()), 
     path('project/', softdesk_views.ProjectView.as_view()), 
     path('project/<pk>/', softdesk_views.ProjectView.as_view()), 
     # issue 
     path('issues/', softdesk_views.IssuesListView.as_view()), 
+    path('view_issue/<pk>/', softdesk_views.GetIssueView.as_view()), 
     path('issue/', softdesk_views.IssueView.as_view()), 
     path('issue/<pk>/', softdesk_views.IssueView.as_view()), 
     path('project_issues/<project_id>/', softdesk_views.IssuesProjectListView.as_view()), 
     path('user_issues/', softdesk_views.IssuesUserListView.as_view()), 
     # comment 
     path('comments/', softdesk_views.CommentListView.as_view(), name='comments'), 
+    path('view_comment/<pk>/', softdesk_views.GetCommentView.as_view(), name='comment'), 
     path('comment/', softdesk_views.CommentView.as_view(), name='comment'), 
     path('comment/<pk>/', softdesk_views.CommentView.as_view(), name='comment'), 
     path('issue_comments/<issue_id>/', softdesk_views.CommentsIssueListView.as_view()), 
