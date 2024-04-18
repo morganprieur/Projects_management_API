@@ -56,39 +56,5 @@ class UserPofileSerializer(serializers.ModelSerializer):
                 user = get_user, 
                 **validated_data, 
             ) 
-            # else: 
-            #     age = minimum_age(validated_data['age']) 
-            #     return False 
-        # else: 
-        #     profile = profile.update( 
-        #         **validated_data, 
-        #     ) 
-        #     profile.save() 
-        #     return profile 
-
-
-    # def create(self, instance, validated_data): 
-    #     if 'age' in validated_data.keys(): 
-    #         if validated_data['age'] > 15: 
-    #             if 'user' in validated_data.keys(): 
-    #                 user_data = validated_data.pop('user') 
-    #                 user_data['password'] = make_password(user_data['password']) 
-
-    #                 new_user = User.objects.create(**user_data) 
-    #                 get_user = User.objects.last() 
-
-    #                 return UserProfile.objects.create( 
-    #                     user = get_user, 
-    #                     **validated_data, 
-    #                 ) 
-    #         else: 
-    #             age = minimum_age(validated_data['age']) 
-    #             return False 
-    #     else: 
-    #         profile = profile.update( 
-    #             **validated_data, 
-    #         ) 
-    #         profile.save() 
-    #         return profile 
         
 
