@@ -2,8 +2,16 @@
 # Projects Management API 
 
 ## Description 
-API de support B2B développée avec Django RestFramework. Elle permet de gérer des utilisateurs, des projets, des tickets et des commentaires de tickets. L'authentification par JWT est obligatoire, les utilisateur peuvent choisir d'autoriser le partage de leurs données et d'être contactés, créer des projets, tickets et commentaires, mais ne peuvent modifier ou supprimer que les leurs. 
-Développement selon les princpes "green code" de l'INR, et respect de certaines règles du RGPD (consentement, accès, rectification, modification des données et choix de partage). 
+
+Django RestFramework B2B support API. 
+It allows to manage users, projects, issues and issues' comments. Authentication is ensured by JWT. The users chose to share or not their data, and to be contacted or not, and they are allowed to manage their choices even they want it. 
+The logged in users can create projects, issues, and issues' comments, and manage their own objects. 
+The API respects "green code" of "INR" and some rules of the GDPR about the users' data. 
+
+The documentation has been generated with DRF Spectacular. 
+
+The (PostgreSQL) DB and the API are running into different Docker containers. 
+
 
 ## Installation 
 
