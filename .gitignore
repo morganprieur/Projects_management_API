@@ -9,6 +9,8 @@ volumes/
 
 roadmap.md
 api/api/__pycache__
+docs/routes_API.xmind
+
 
 # à vérifier et remettre : 
 api/commands
