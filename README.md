@@ -1,9 +1,9 @@
 
-# Softdesk Support 
+# Projects Management API 
 
 ## Description 
-API de support B2B développée avec Django RestFramework. Elle permet de gérer des utilisateurs, des projets, des tickets et des commentaires de tickets. L'authentification par JWT est obligatoire, les utilisateur peuvent choisir d'autoriser le partage de leurs données et être contactés, créer des projets, tickets et commentaires, mais ne peuvent modifier ou supprimer que les leurs. 
-Développement selon les princpes "green code" de l'INR, et respect de certaines mesures du RGPD. 
+API de support B2B développée avec Django RestFramework. Elle permet de gérer des utilisateurs, des projets, des tickets et des commentaires de tickets. L'authentification par JWT est obligatoire, les utilisateur peuvent choisir d'autoriser le partage de leurs données et d'être contactés, créer des projets, tickets et commentaires, mais ne peuvent modifier ou supprimer que les leurs. 
+Développement selon les princpes "green code" de l'INR, et respect de certaines règles du RGPD (consentement, accès, rectification, modification des données et choix de partage). 
 
 ## Installation 
 
