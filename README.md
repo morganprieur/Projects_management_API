@@ -21,7 +21,7 @@ Vérifier que le fichier .env est présent et contient les variables utiles pour
 
 
 2. **Environnement virtuel (Pipenv)** 
-(Doc)[https://pypi.org/project/pipenv/] 
+[Doc](https://pypi.org/project/pipenv/) 
 
 21. Initialiser l'env. virtuel : `pipenv install` 
     Installation des dépendances 
