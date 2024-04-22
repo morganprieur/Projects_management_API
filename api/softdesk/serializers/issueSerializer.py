@@ -30,6 +30,9 @@ ISSUE_TAG = (
 
 
 class IssueSerializer(serializers.ModelSerializer): 
+    """ The issues have default values: 
+        status = "todo" and priority = 'low'. 
+    """ 
     status = serializers.ChoiceField( 
         choices=ISSUE_STATUS, 
         required=False, 
