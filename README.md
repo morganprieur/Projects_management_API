@@ -23,17 +23,17 @@ Vérifier que le fichier .env est présent et contient les variables utiles pour
 2. **Environnement virtuel (Pipenv)** 
 [Doc](https://pypi.org/project/pipenv/) 
 
-21. Initialiser l'env. virtuel : `pipenv install` 
-    Installation des dépendances 
-22. Activer l'env. virtuel : `pipenv shell` 
-    --> le nom du terminal devient "pipenv" 
-23. Pour arrêter l'env. virtuel : `exit` 
+* Initialiser l'env. virtuel : `pipenv install` 
+    Installation des dépendances
+* Activer l'env. virtuel : `pipenv shell` 
+    --> le nom du terminal devient "pipenv"    
+* Pour arrêter l'env. virtuel : `exit` 
 
 
 3. **Lancer le serveur Django** 
 
-31. `pipenv run python <chemin/vers>/manage.py runserver` 
-32. Pour arrêter le serveur : `Ctrl+c` 
+* `pipenv run python <chemin/vers>/manage.py runserver` 
+* Pour arrêter le serveur : `Ctrl+c` 
 
 
 4. Visiter l'adresse `http://127.0.0.1:8000/` dans un navigateur pour vérifier le projet fonctionne. 
