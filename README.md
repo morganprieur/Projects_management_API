@@ -48,8 +48,6 @@ Seulement les tests pour vérifier la création d'enregistrements par les signau
 `api/users/tests.py`    
 
 *  Lancer les tests :     
-`pipenv install`     
-`pipenv shell`     
 `cd api/`     
 `python manage.py test users.tests -v 3`     
 Régler le degré de détails avec `-v` : `3` = le maximum    
